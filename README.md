@@ -16,7 +16,9 @@ Major steps:
 
 3. Input box with selected industry 
     - Look in folder for list of companies in this industry 
-    - Pull down GROWTH average. Will need to look at CapIQ for this bit. Includes industry PLUS this stock ticker 
+    - Pull down GROWTH average. Will need to look at CapIQ for this bit. Includes industry PLUS this stock ticker
+    - Selected industry, for test, will be in a CSV BUT will need to make this a actual database 
+
 4. User inputs stock ticker, API call 
     - 
 
@@ -37,12 +39,25 @@ Major steps:
         - Stock ticker exists 
 
 7. Jenkins for CI/ CD
+    - Super useful for quick deployment when adding in new industries
+        - Probs could've done something with google sheets for self-service, 
+        but is fine 
+    - Can just add the industry.csv into indices folder and commit, done 
+
+
+# Dash notes:
+
+Two main components:
+Layouts: Describes the tree of components that make up the application and how users experience content. Basically like React components but built in (dash_core_components, dash_html_components) 
+
+Callbacks: Holds logic for dash app. Callbacks are automatically called whenever an input component's property changes. Can chain callbacks to trigger multiple updates in app. Callbacks are made of Inputs and Outputs. 
 
 
 Notes:
 1. Add "request an industry" feature. Sends me an email
 when people need to add a new subsection. Expect 1-2 weeks. 
 Ping directly if need more urgently. 
+2. Use dcc.upload to allow users to input their own CSVs for sub-industries 
 
 
 

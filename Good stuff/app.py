@@ -7,6 +7,7 @@ from dash.dependencies import Input, Output, State
 import yfinance
 from layout import *
 
+
 # All content from jacquessham 
 # I'm using as a template for building KPI tracker, as stock ticker call is perfect
 # Then will delete 'good stuff' folder
