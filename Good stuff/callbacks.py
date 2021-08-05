@@ -19,6 +19,7 @@ app = dash.Dash()
 # Base Layout
 app.layout = html.Div([
 	dcc.Tabs(id='dashboard-tabs', value='price-tab',children=[
+		# tab 1
 		dcc.Tab(label='Stock Price', value='price-tab',children=[
 			html.Div([html.H2(id='tab1-stock-name',
 				           style={'width':'30%','display':'inline-block'}), 
@@ -33,6 +34,8 @@ app.layout = html.Div([
 				     style={'width':'90%','margin':'auto'})
 			# Position 2, Table of stats and graph
 			]), # Tab 1, End price-tab
+
+		# tab 2
 		dcc.Tab(label='Stock/Index Growth', value='change-tab',children=[
 			html.Div([html.H2('Stock Price Growth vs. Index Growth')],
 				     style={'width':'90%','margin':'auto',
@@ -171,6 +174,11 @@ def get_ticker(n_clicks, time, ticker, mkt):
 
 	return stock_name, ticker, price, price_change, price_change_colour, \
 	       price_percent_change, price_change_colour, '', fig, table
+
+
+
+
+
 
 ##### Callbacks for Tab 2 ######
 """

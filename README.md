@@ -53,11 +53,12 @@ Layouts: Describes the tree of components that make up the application and how u
 Callbacks: Holds logic for dash app. Callbacks are automatically called whenever an input component's property changes. Can chain callbacks to trigger multiple updates in app. Callbacks are made of Inputs and Outputs. 
 
 
-Notes:
+Notes / Extra features:
 1. Add "request an industry" feature. Sends me an email
 when people need to add a new subsection. Expect 1-2 weeks. 
 Ping directly if need more urgently. 
 2. Use dcc.upload to allow users to input their own CSVs for sub-industries 
+3. Use data table to double check the companies in the selected industry. Queries the database (do a database first)
 
 
 
