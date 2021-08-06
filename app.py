@@ -1,11 +1,12 @@
 
 import os
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output # So I can simplify callback
 import plotly 
 import pandas
+import re
 from datetime import date
 from datetime import datetime
 
@@ -19,39 +20,57 @@ server = app.server
 
 # Layout of components 
 app.layout = html.Div([
-    html.H2('KPI Builder'),
+    html.H2('KPI Builder'),    
     html.H4('Please input target ticker, industry dropdown, and launch date.'),
 
-    # Date picker, last 5 years 
     dcc.DatePickerSingle(
-        id="date-picker", 
-        min_date_allowed=date(2015, 1, 1),
-        max_date_allowed=datetime.today(), # not sure if correct format
-        # maybe datetime.today().strftime('%Y-%m-%d') to get => '2021-01-26'
-        initial_visible_month=date(2021,8,1), 
-        date=date(2021,8,1)
-        # need to look at the dash documentation for date
+        id='my-date-picker-single',
+        min_date_allowed=date(2010, 1, 1),
+        max_date_allowed=date.today(),
+        initial_visible_month=date.today(),
+        date=date(2021, 8, 1)
     ),
-    # Stock ticker dropdown 
-    dcc.Dropdown(
-        id='dropdown',
-        options=[{'label': i, 'value': i} for i in ['LA', 'NYC', 'MTL']],
-        value='LA'
-    ),
-    html.Div(id='display-value')
+    html.Div(id='output-container-date-picker-single')
+
 ])
 
 
-# Callbacks
-@app.callback(dash.dependencies.Output('display-value', 'children'),
-              [dash.dependencies.Output('date-picker', 'children')],
-              [dash.dependencies.Input('dropdown', 'value')])
 
-def display_value(value):
-    return 'You have selected "{}"'.format(value)
+# Callbacks
+@app.callback(
+    Output('output-container-date-picker-single', 'children'),
+    Input('my-date-picker-single', 'date'))
+def update_output(date_value):
+    string_prefix = 'You have selected: '
+    if date_value is not None:
+        date_object = date.fromisoformat(date_value)
+        date_string = date_object.strftime('%B %d, %Y')
+        return string_prefix + date_string
+
+
+# Helper functions to be added into layout/ callbacks 
+# def display_value(value):
+#     return 'You have selected "{}"'.format(value)
 
 def display_graph(date):
     return "got it"
+
+def verify_ticker(ticker):
+    tick = re.findall('^[A-Za-z]{1,4}$', ticker) 
+    # python regex to find matches and return strings 
+    if len(tick)>0:
+        return True, tick[0].upper()
+    else: 
+        return False
+
+ticker = "AAPL"
+
+# def get_stock(ticker):
+#     stock = yfinance.Ticker(ticker)
+
+#     print(stock)
+#     Assume stock ticker exists, but need to add check if doesnt
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
