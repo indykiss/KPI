@@ -30,6 +30,11 @@ app.layout = html.Div([
         initial_visible_month=date.today(),
         date=date(2021, 8, 1)
     ),
+    
+    html.Div("Target vs "),
+    html.Div(get_info_box),
+    html.Div(get_graph),
+
     html.Div(id='output-container-date-picker-single')
 
     # Now add a stock sticker tab 
@@ -58,6 +63,20 @@ def update_output(date_value):
 
 def display_graph(date):
     return "got it"
+
+def get_info_box: 
+	return html.Div([
+			html.Div([dcc.Dropdown(id='tab2-index-choice', #???
+				                   options=index_choice,
+				                   value=index_choice[0]['value'],
+								   style={'text-align':'left'})]),
+			html.Div(style={'width':'20%','display': 'inline-block'}),
+			html.Div([dcc.Dropdown(id='tab2-stock-include',
+				                   options=[],
+				                   value=[],
+				                   multi=True,
+				                   style={'text-align':'left'})])
+		])    
 
 def verify_ticker(ticker):
     tick = re.findall('^[A-Za-z]{1,4}$', ticker) 
