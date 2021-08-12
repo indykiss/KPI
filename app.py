@@ -32,6 +32,10 @@ app.layout = html.Div([
     ),
     html.Div(id='output-container-date-picker-single')
 
+    # Now add a stock sticker tab 
+    # Simple display current stock price
+
+    # Step after that is showing a graph, any graph  
 ])
 
 
