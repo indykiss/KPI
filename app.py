@@ -68,14 +68,14 @@ def get_info_box:
 	return html.Div([
 			html.Div([dcc.Dropdown(id='tab2-index-choice', #???
 				                   options=index_choice,
-				                   value=index_choice[0]['value'],
-								   style={'text-align':'left'})]),
+				                   value=index_choice[0]['value']
+								   )]),
 			html.Div(style={'width':'20%','display': 'inline-block'}),
 			html.Div([dcc.Dropdown(id='tab2-stock-include',
 				                   options=[],
 				                   value=[],
-				                   multi=True,
-				                   style={'text-align':'left'})])
+				                   multi=True
+				                )])
 		])    
 
 def verify_ticker(ticker):
