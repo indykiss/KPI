@@ -20,6 +20,8 @@ server = app.server
 
 # Layout of components 
 app.layout = html.Div([
+
+    # Inputs - UI
     html.H2('KPI Builder'),    
     html.H4('Please input target ticker, industry dropdown, and launch date.'),
 
@@ -46,8 +48,10 @@ app.layout = html.Div([
         value='AAPL'        
     ),
 
-#    html.Div(get_tab1_info_box()),
+    # Next step: Just add a graph or any info that displays 
+    # the client's ticker info
 
+    # Outputs - UI
     html.Div(id='output-date-picker'),
     html.Div(id='output-client-picker')
 
@@ -58,6 +62,9 @@ app.layout = html.Div([
 ])
 
 
+
+# Back end stuffs 
+# Each input/ output uses it's own callback   
 
 # Callbacks
 @app.callback(
@@ -70,14 +77,25 @@ def update_output(date_value):
         date_string = date_object.strftime('%B %d, %Y')
         return string_prefix + date_string
     
+# Keep it simple for now, only hardcoded clients as option  
 @app.callback(
     Output('output-client-picker', 'children'),
     Input('input-client-picker', 'value'))
  
+# Takes the client_name input and outputs info about 
+# stock
+# Basically just connect the world finance API now 
+
 def update_client_picker(client_name):
     string_prefix = 'You have selected: '
     if client_name is not None: 
         return string_prefix + client_name
+
+
+
+
+
+
 
 
 # Helper functions to be added into layout/ callbacks 

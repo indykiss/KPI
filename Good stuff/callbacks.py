@@ -39,7 +39,7 @@ app.layout = html.Div([
 		dcc.Tab(label='Stock/Index Growth', value='change-tab',children=[
 			html.Div([html.H2('Stock Price Growth vs. Index Growth')],
 				     style={'width':'90%','margin':'auto',
-				            'text-align':'center'}),
+				            'text-align':'center'} ),
 			# Position 0, Title
 			html.Div(get_tab2_info_box(),
 				     style={'width':'90%','margin':'auto'}),
