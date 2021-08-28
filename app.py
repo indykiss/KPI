@@ -93,7 +93,8 @@ def update_client_picker(client_name):
 
 
 
-
+# Step 1: Check if the fiance API is working
+# Just display on page in a div
 
 
 
