@@ -3,13 +3,20 @@ import os
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output # So I can simplify callback
 import plotly 
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import pandas
 import re
+import yfinance as yf
 from datetime import date
 from datetime import datetime
+from helpers import make_table, make_card, ticker_inputs, make_item
 
+
+# Basically index.py
 
 # Out of box specifications by Dash 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -53,7 +60,38 @@ app.layout = html.Div([
 
     # Outputs - UI
     html.Div(id='output-date-picker'),
-    html.Div(id='output-client-picker')
+    html.Div(id='output-client-picker'),
+
+
+# IDK, copied and pasted
+
+	html.Div([
+	dbc.Row([dbc.Col(make_card("Enter Ticker", "success", ticker_inputs('ticker-input', 'date-picker', 36)))]) #row 1
+    ,dbc.Col([make_card("Fin table ", "secondary", html.Div(id="fin-table"))])
+    
+	, dbc.Row([make_card("select ticker", "warning", "select ticker")],id = 'cards') #row 2
+
+	, dbc.Row([
+
+			dbc.Col([dbc.Row([dbc.Alert("__Charts__", color="primary")], justify = 'center')
+			,dbc.Row(html.Div(id='x-vol-1'), justify = 'center')
+			, dcc.Interval(
+					id='interval-component',
+					interval=1*150000, # in milliseconds
+					n_intervals=0)   
+			, dcc.Interval(
+					id='interval-component2',
+					interval=1*60000, # in milliseconds
+					n_intervals=0)      
+					])#end col
+			])#end row           
+	]) #end div
+
+
+
+
+
+	
 
     # Now add a stock sticker tab 
     # Simple display current stock price
@@ -84,17 +122,13 @@ def update_output(date_value):
  
 # Takes the client_name input and outputs info about 
 # stock
-# Basically just connect the world finance API now 
-
+# Basically just connect the world finance API here 
 def update_client_picker(client_name):
     string_prefix = 'You have selected: '
     if client_name is not None: 
         return string_prefix + client_name
 
 
-
-# Step 1: Check if the fiance API is working
-# Just display on page in a div
 
 
 
