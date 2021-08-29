@@ -123,10 +123,26 @@ def update_output(date_value):
 # Takes the client_name input and outputs info about 
 # stock
 # Basically just connect the world finance API here 
-def update_client_picker(client_name):
-    string_prefix = 'You have selected: '
-    if client_name is not None: 
-        return string_prefix + client_name
+# def update_client_picker(client_name):
+#     string_prefix = 'You have selected: '
+#     if client_name is not None: 
+#         return string_prefix + client_name
+
+def update_client_picker(ticker):
+        ticker = ticker.upper()
+        if ticker is None:
+                TICKER = 'MSFT'
+        else:
+                TICKER = yf.Ticker(ticker)
+        
+        cards = [ dbc.Col(make_card("Previous Close ", "secondary", TICKER.info['previousClose']))
+        , dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
+        , dbc.Col(make_card("Sector", 'secondary', TICKER.info['sector']))
+        , dbc.Col(make_card("Beta", 'secondary', TICKER.info['beta']))
+        , dbc.Col(make_card("50d Avg Price", 'secondary', TICKER.info['fiftyDayAverage']))
+        , dbc.Col(make_card("Avg 10d Vol", 'secondary', TICKER.info['averageVolume10days']))
+        ] #end cards list
+        return cards
 
 
 
