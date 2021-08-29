@@ -63,29 +63,27 @@ app.layout = html.Div([
     html.Div(id='output-client-picker'),
 
 
+
 # IDK, copied and pasted
 
-	html.Div([
-	dbc.Row([dbc.Col(make_card("Enter Ticker", "success", ticker_inputs('ticker-input', 'date-picker', 36)))]) #row 1
-    ,dbc.Col([make_card("Fin table ", "secondary", html.Div(id="fin-table"))])
+	# html.Div([
+	# dbc.Row([dbc.Col(make_card("Enter Ticker", "success", ticker_inputs('ticker-input', 'date-picker', 36)))]) #row 1
     
-	, dbc.Row([make_card("select ticker", "warning", "select ticker")],id = 'cards') #row 2
-
-	, dbc.Row([
-
-			dbc.Col([dbc.Row([dbc.Alert("__Charts__", color="primary")], justify = 'center')
-			,dbc.Row(html.Div(id='x-vol-1'), justify = 'center')
-			, dcc.Interval(
-					id='interval-component',
-					interval=1*150000, # in milliseconds
-					n_intervals=0)   
-			, dcc.Interval(
-					id='interval-component2',
-					interval=1*60000, # in milliseconds
-					n_intervals=0)      
-					])#end col
-			])#end row           
-	]) #end div
+	# # Should be chart at some point in the future
+	# , dbc.Row([
+	# 		dbc.Col([dbc.Row([dbc.Alert("__Charts__", color="primary")], justify = 'center')
+	# 		,dbc.Row(html.Div(id='x-vol-1'), justify = 'center')
+	# 		, dcc.Interval(
+	# 				id='interval-component',
+	# 				interval=1*150000, # in milliseconds
+	# 				n_intervals=0)   
+	# 		, dcc.Interval(
+	# 				id='interval-component2',
+	# 				interval=1*60000, # in milliseconds
+	# 				n_intervals=0)      
+	# 				])#end col
+	# 		])#end row           
+	# ]) #end div
 
 
 
@@ -109,7 +107,7 @@ app.layout = html.Div([
     Output('output-date-picker', 'children'),
     Input('input-date-picker', 'date'))
 def update_output(date_value):
-    string_prefix = 'You have selected: '
+    string_prefix = 'Date selected: '
     if date_value is not None:
         date_object = date.fromisoformat(date_value)
         date_string = date_object.strftime('%B %d, %Y')
@@ -129,22 +127,23 @@ def update_output(date_value):
 #         return string_prefix + client_name
 
 def update_client_picker(ticker):
-        ticker = ticker.upper()
-        if ticker is None:
-                TICKER = 'MSFT'
-        else:
-                TICKER = yf.Ticker(ticker)
+    ticker = ticker.upper()
+    TICKER = yf.Ticker(ticker)
         
-        cards = [ dbc.Col(make_card("Previous Close ", "secondary", TICKER.info['previousClose']))
-        , dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
-        , dbc.Col(make_card("Sector", 'secondary', TICKER.info['sector']))
-        , dbc.Col(make_card("Beta", 'secondary', TICKER.info['beta']))
-        , dbc.Col(make_card("50d Avg Price", 'secondary', TICKER.info['fiftyDayAverage']))
-        , dbc.Col(make_card("Avg 10d Vol", 'secondary', TICKER.info['averageVolume10days']))
-        ] #end cards list
-        return cards
+    cards = [ 
+	dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName'])),
+	dbc.Col(make_card("Previous Close ", "secondary", TICKER.info['previousClose'])),
+    dbc.Col(make_card("Open", "secondary", TICKER.info['open'])),
+    dbc.Col(make_card("Sector", 'secondary', TICKER.info['sector'])),
+    dbc.Col(make_card("50d Avg Price", 'secondary', TICKER.info['fiftyDayAverage']))
+    ] #end cards list
+    print(TICKER.info)
+    return cards
 
 
+# ONE STEP THAT I SHOULD DO IS FIGURE OUT THE MATHS BEHIND THE INUSTRY GROWTH THING 
+# DO THIS DURING WORK ON EXCEL 
+# LOOK AT WHAT CAP IQ DOES 
 
 
 
