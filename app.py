@@ -146,12 +146,14 @@ def update_client_picker(ticker):
 # INDUSTRY GROWTH --> LOOK AT % STOCK PRICE GROWTH MONTH OVER MONTH FOR 1 YEAR PRE-LAUNCH
 # AND 1 YEAR POST LAUNCH. USE GROCERY STORE SUBINDUSTRY AS EXAMPLE 
 
+# MARKET CAPITALIZATION WEIGHTED IS ANOTHER WAY TO MAKE THE GRAPH
+# MAYBE AN EXTEND FEATURE
 
 # ANOTHER STEP IS LOOKING AT HOW TO BUILD A GRAPH WITH THE DATA 
 # https://medium.com/swlh/how-to-create-a-dashboard-to-dominate-the-stock-market-using-python-and-dash-c35a12108c93
 # DOES A GREAT JOB OF EXPLAINING WHAT TO DO 
 
-
+# Still use the grocery store data EVEN THOUGH IT DOESNT PROVE OUTCOME
 
 # Helper functions to be added into layout/ callbacks 
 # def display_value(value):
