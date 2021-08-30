@@ -140,11 +140,16 @@ def update_client_picker(ticker):
     print(TICKER.info)
     return cards
 
+# OKAY now lets do a graph over time 
 
-# ONE STEP THAT I SHOULD DO IS FIGURE OUT THE MATHS BEHIND THE INUSTRY GROWTH THING 
-# DO THIS DURING WORK ON EXCEL 
-# LOOK AT WHAT CAP IQ DOES 
 
+# INDUSTRY GROWTH --> LOOK AT % STOCK PRICE GROWTH MONTH OVER MONTH FOR 1 YEAR PRE-LAUNCH
+# AND 1 YEAR POST LAUNCH. USE GROCERY STORE SUBINDUSTRY AS EXAMPLE 
+
+
+# ANOTHER STEP IS LOOKING AT HOW TO BUILD A GRAPH WITH THE DATA 
+# https://medium.com/swlh/how-to-create-a-dashboard-to-dominate-the-stock-market-using-python-and-dash-c35a12108c93
+# DOES A GREAT JOB OF EXPLAINING WHAT TO DO 
 
 
 
