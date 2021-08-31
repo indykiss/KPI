@@ -41,10 +41,21 @@ app.layout = html.Div([
         date=date(2021, 8, 1)
     ),
 
+	html.Div("Select the time range. Please select a starting date before launch and an end date after launch. We recommend 1 year BEFORE launch and 1 year AFTER launch. Please note that selecting competitors that were not public during this entire range will result in skewed data."),
+
+	dcc.DatePickerRange(
+		id="input-date-range-picker", 
+		min_date_allowed=date(2010, 1, 1),
+        max_date_allowed=date.today(),
+        initial_visible_month=date.today(),
+        date=date(2021, 8, 1)
+	),
+
     # html.Div(get_info_box()),
     
     html.Div("Select the client"),
 
+	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs
     dcc.Dropdown(
         id='input-client-picker',
         options=[
@@ -55,13 +66,30 @@ app.layout = html.Div([
         value='AAPL'        
     ),
 
+
+	html.Div("Select the subindustry competitors"),
+
+	# NEED TO SWAP THIS OUT WITH DYNAMIC SEARCH OF ALL S&P COMPANIES
+	dcc.Dropdown(
+		id='input-subindustry-picker',
+		options=[
+			{'label': 'Apple', 'value': 'AAPL'},
+			{'label': 'Google', 'value': 'GOOGL'},
+			{'label': 'Facebook', 'value': 'FB'}, 
+			{'label': 'Amazon', 'value': 'AMZN'}			
+		],
+		value=['GOOGL', 'FB'],
+		multi=True
+	), 
+
     # Next step: Just add a graph or any info that displays 
     # the client's ticker info
 
     # Outputs - UI
     html.Div(id='output-date-picker'),
     html.Div(id='output-client-picker'),
-
+	html.Div(id='output-subindustry-picker'),
+	html.Div(id='output-date-range-picker')
 
 
 # IDK, copied and pasted
@@ -84,17 +112,6 @@ app.layout = html.Div([
 	# 				])#end col
 	# 		])#end row           
 	# ]) #end div
-
-
-
-
-
-	
-
-    # Now add a stock sticker tab 
-    # Simple display current stock price
-
-    # Step after that is showing a graph, any graph  
 ])
 
 
@@ -103,9 +120,12 @@ app.layout = html.Div([
 # Each input/ output uses it's own callback   
 
 # Callbacks
+
+# Select date of launch
 @app.callback(
     Output('output-date-picker', 'children'),
     Input('input-date-picker', 'date'))
+
 def update_output(date_value):
     string_prefix = 'Date selected: '
     if date_value is not None:
@@ -113,19 +133,40 @@ def update_output(date_value):
         date_string = date_object.strftime('%B %d, %Y')
         return string_prefix + date_string
     
-# Keep it simple for now, only hardcoded clients as option  
+
+
+
+# Select the time frame 
+@app.callback(
+    Output('output-date-range-picker', 'children'),
+    [Input('input-date-range-picker', 'start_date'),
+    Input('input-date-range-picker', 'end_date')])
+
+def update_output(start_date, end_date):
+    string_prefix = 'You have selected: '
+    if start_date is not None:
+        start_date_object = date.fromisoformat(start_date)
+        start_date_string = start_date_object.strftime('%B %d, %Y')
+        string_prefix = string_prefix + 'Start Date: ' + start_date_string + ' | '
+    if end_date is not None:
+        end_date_object = date.fromisoformat(end_date)
+        end_date_string = end_date_object.strftime('%B %d, %Y')
+        string_prefix = string_prefix + 'End Date: ' + end_date_string
+    if len(string_prefix) == len('You have selected: '):
+        return 'Select a date to see it displayed here'
+    else:
+        return string_prefix
+
+
+
+
+# Select client we're targeting
 @app.callback(
     Output('output-client-picker', 'children'),
     Input('input-client-picker', 'value'))
  
-# Takes the client_name input and outputs info about 
-# stock
-# Basically just connect the world finance API here 
-# def update_client_picker(client_name):
-#     string_prefix = 'You have selected: '
-#     if client_name is not None: 
-#         return string_prefix + client_name
-
+# Takes the client_name input and outputs info about  stock
+# Connect the yfinance API here 
 def update_client_picker(ticker):
     ticker = ticker.upper()
     TICKER = yf.Ticker(ticker)
@@ -137,12 +178,24 @@ def update_client_picker(ticker):
     dbc.Col(make_card("Sector", 'secondary', TICKER.info['sector'])),
     dbc.Col(make_card("50d Avg Price", 'secondary', TICKER.info['fiftyDayAverage']))
     ] #end cards list
-    print(TICKER.info)
     return cards
 
-# OKAY now lets do a graph over time 
 
 
+
+# Select the subindustry competitors
+# OKAY now lets do a graph over time WITH companies AND the date info?
+# HOW TO INCORPORATE DATA ACROSS BOTH DATE RANGE PICKER AND 
+# COMPANY SELECTOR TO GET GRAPH
+@app.callback(
+    Output('output-subindustry-picker', 'children'),
+    Input('input-subindustry-picker', 'value'))
+	
+def update_output(companies):
+	print('You have selected "{}"'.format(companies))
+
+
+						##### NOTES ####
 # INDUSTRY GROWTH --> LOOK AT % STOCK PRICE GROWTH MONTH OVER MONTH FOR 1 YEAR PRE-LAUNCH
 # AND 1 YEAR POST LAUNCH. USE GROCERY STORE SUBINDUSTRY AS EXAMPLE 
 
@@ -159,8 +212,11 @@ def update_client_picker(ticker):
 # def display_value(value):
 #     return 'You have selected "{}"'.format(value)
 
-def display_graph(date):
-    return "got it"
+
+
+
+# IDK JUST OLDER STUFF THAT I'M NOT CURRENTLY USING. 
+# DELETE THIS SOON PROBABLY 
 
 
 
