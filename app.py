@@ -42,7 +42,6 @@ app.layout = html.Div([
     ),
 
 	html.Div("Select the time range. Please select a starting date before launch and an end date after launch. We recommend 1 year BEFORE launch and 1 year AFTER launch. Please note that selecting competitors that were not public during this entire range will result in skewed data."),
-
     dcc.DatePickerRange(
         id='input-date-range-picker',
         min_date_allowed=date(2000, 1, 1),
@@ -51,10 +50,8 @@ app.layout = html.Div([
         end_date=date(2021, 8, 25)
     ),
 
-    
+	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs    
     html.Div("Select the client"),
-
-	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs
     dcc.Dropdown(
         id='input-client-picker',
         options=[
@@ -65,10 +62,8 @@ app.layout = html.Div([
         value='AAPL'        
     ),
 
-
-	html.Div("Select the subindustry competitors"),
-
 	# NEED TO SWAP THIS OUT WITH DYNAMIC SEARCH OF ALL S&P COMPANIES
+	html.Div("Select the subindustry competitors"),
 	dcc.Dropdown(
 		id='input-subindustry-picker',
 		options=[
@@ -92,7 +87,6 @@ app.layout = html.Div([
 
 
 # IDK, copied and pasted
-
 	# html.Div([
 	# dbc.Row([dbc.Col(make_card("Enter Ticker", "success", ticker_inputs('ticker-input', 'date-picker', 36)))]) #row 1
     
@@ -189,9 +183,19 @@ def update_client_picker(ticker):
 @app.callback(
     Output('output-subindustry-picker', 'children'),
     Input('input-subindustry-picker', 'value'))
-	
+
 def update_output(companies):
 	print('You have selected "{}"'.format(companies))
+
+	# For loop through companies
+		# Access yfinance data
+			# Possibly helper function because I need to 
+			# pull open prices for each 1st Monday of the month
+			# from start to end range  
+		# MAYBE START SIMPLE AND JUST PLOT ALL OPENS 
+		# FOR ENTIRE TIME RANGE SO WE CAN JUST A CHART UP
+	# Now we have an array of tuples?
+
 
 
 						##### NOTES ####
