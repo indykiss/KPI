@@ -4,6 +4,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import plotly.graph_objs as go
 from dash.dependencies import Input, Output # So I can simplify callback
 import plotly 
 import plotly.graph_objects as go
@@ -82,8 +83,8 @@ app.layout = html.Div([
     # Outputs - UI
     html.Div(id='output-date-picker'),
     html.Div(id='output-client-picker'),
-	html.Div(id='output-subindustry-picker'),
-	html.Div(id='output-date-range-picker')
+	html.Div(id='output-date-range-picker'),
+	html.Div(id='output-subindustry-picker')
 
 
 # IDK, copied and pasted
@@ -182,10 +183,30 @@ def update_client_picker(ticker):
 # COMPANY SELECTOR TO GET GRAPH
 @app.callback(
     Output('output-subindustry-picker', 'children'),
-    Input('input-subindustry-picker', 'value'))
+    [Input('input-subindustry-picker', 'value'), 
+	Input('input-date-range-picker', 'start_date'), 
+	Input('input-date-range-picker', 'end_date')])
 
-def update_output(companies):
+def update_output(companies, start_date, end_date):
 	print('You have selected "{}"'.format(companies))
+
+	prices = []
+	for x in companies: 
+		temp = x.upper()
+		TICKER = yf.Ticker(temp)
+		price = TICKER.info['open']
+		prices.append(price)
+
+	print(prices)
+
+	fig = go.Figure(data=[go.Scatter(x=companies, y=prices)])
+
+	newGraph = html.Div(dcc.Graph(
+		id='output-subindustry-picker',
+		figure=fig
+	))
+
+	return newGraph
 
 	# For loop through companies
 		# Access yfinance data
