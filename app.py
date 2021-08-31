@@ -12,9 +12,7 @@ from plotly.subplots import make_subplots
 import pandas
 import re
 import yfinance as yf
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
+from datetime import date, datetime, timedelta
 from helpers import make_table, make_card, ticker_inputs, make_item
 
 
@@ -189,18 +187,23 @@ def update_client_picker(ticker):
 	Input('input-date-range-picker', 'end_date')])
 
 def update_output(companies, start_date, end_date):
-	print('You have selected "{}"'.format(companies))
+	#print('You have selected "{}"'.format(companies))
 
 	prices = []
 	
+	end_date_object = date.fromisoformat(end_date)
+
 	for x in companies: 
-		prices.append(x)
+		if start_date is not None:			
+			start_date_object = date.fromisoformat(start_date)
+			new_date = start_date_object + timedelta(days=30)
 
-		begin = start_date
-
-		begin = begin + datetime.timedelta(days=30)
-
-		print(begin)
+			while new_date < end_date_object:
+				temp = x.upper()
+				TICKER = yf.Ticker(temp)
+				price = TICKER.info['open']
+				prices.append(price)
+				new_date = new_date + timedelta(30)				
 
 		# This while loop isn't great. The yfinance stuff is accurate
 		# just need to get the right dates
