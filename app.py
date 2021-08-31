@@ -14,6 +14,7 @@ import re
 import yfinance as yf
 from datetime import date
 from datetime import datetime
+from datetime import timedelta
 from helpers import make_table, make_card, ticker_inputs, make_item
 
 
@@ -195,11 +196,22 @@ def update_output(companies, start_date, end_date):
 	for x in companies: 
 		prices.append(x)
 
-		print(start_date)
-		temp = x.upper()
-		TICKER = yf.Ticker(temp)
-		price = TICKER.info['open']
-		prices.append(price)
+		begin = start_date
+
+		begin = begin + datetime.timedelta(days=30)
+
+		print(begin)
+
+		# This while loop isn't great. The yfinance stuff is accurate
+		# just need to get the right dates
+
+		# while begin < end_date:
+		# 	temp = x.upper()
+		# 	TICKER = yf.Ticker(temp)
+		# 	price = TICKER.info['open']
+		# 	prices.append(price)
+		# 	begin = begin + datetime.timedelta(days=30) # 30 days?
+		# 	print(begin)
 
 	print(prices)
 
