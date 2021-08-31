@@ -191,7 +191,11 @@ def update_output(companies, start_date, end_date):
 	print('You have selected "{}"'.format(companies))
 
 	prices = []
+	
 	for x in companies: 
+		prices.append(x)
+
+		print(start_date)
 		temp = x.upper()
 		TICKER = yf.Ticker(temp)
 		price = TICKER.info['open']
