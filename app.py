@@ -43,15 +43,14 @@ app.layout = html.Div([
 
 	html.Div("Select the time range. Please select a starting date before launch and an end date after launch. We recommend 1 year BEFORE launch and 1 year AFTER launch. Please note that selecting competitors that were not public during this entire range will result in skewed data."),
 
-	dcc.DatePickerRange(
-		id="input-date-range-picker", 
-		min_date_allowed=date(2010, 1, 1),
+    dcc.DatePickerRange(
+        id='input-date-range-picker',
+        min_date_allowed=date(2000, 1, 1),
         max_date_allowed=date.today(),
-        initial_visible_month=date.today(),
-        date=date(2021, 8, 1)
-	),
+        initial_visible_month=date(2021, 8, 5),
+        end_date=date(2021, 8, 25)
+    ),
 
-    # html.Div(get_info_box()),
     
     html.Div("Select the client"),
 
