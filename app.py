@@ -189,7 +189,7 @@ def update_client_picker(ticker):
 def update_output(companies, start_date, end_date):
 	#print('You have selected "{}"'.format(companies))
 
-	prices = []
+	hash = {}
 	
 	end_date_object = date.fromisoformat(end_date)
 
@@ -197,13 +197,21 @@ def update_output(companies, start_date, end_date):
 		if start_date is not None:			
 			start_date_object = date.fromisoformat(start_date)
 			new_date = start_date_object + timedelta(days=30)
+			prices = []
+
+			# NEED TO PULL YFINANCE DATA FOR EACH NEW_DATE
 
 			while new_date < end_date_object:
 				temp = x.upper()
 				TICKER = yf.Ticker(temp)
 				price = TICKER.info['open']
 				prices.append(price)
-				new_date = new_date + timedelta(30)				
+				new_date = new_date + timedelta(30)	
+				print(new_date)
+
+		hash[x] = prices
+
+		print(hash)			
 
 		# This while loop isn't great. The yfinance stuff is accurate
 		# just need to get the right dates
@@ -218,14 +226,8 @@ def update_output(companies, start_date, end_date):
 
 	print(prices)
 
-	fig = go.Figure(data=[go.Scatter(x=companies, y=prices)])
 
-	newGraph = html.Div(dcc.Graph(
-		id='output-subindustry-picker',
-		figure=fig
-	))
-
-	return newGraph
+	return make_graph(companies, prices)
 
 	# For loop through companies
 		# Access yfinance data
@@ -236,6 +238,16 @@ def update_output(companies, start_date, end_date):
 		# FOR ENTIRE TIME RANGE SO WE CAN JUST A CHART UP
 	# Now we have an array of tuples?
 
+
+def make_graph(companies, prices):
+	fig = go.Figure(data=[go.Scatter(x=companies, y=prices)])
+
+	newGraph = html.Div(dcc.Graph(
+		id='output-subindustry-picker',
+		figure=fig
+	))
+
+	return newGraph
 
 
 						##### NOTES ####
