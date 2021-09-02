@@ -200,6 +200,7 @@ def update_output(companies, start_date, end_date):
 			prices = []
 
 			# NEED TO PULL YFINANCE DATA FOR EACH NEW_DATE
+			# MAYBE USE PANDAS TO STRUCURE DATA LIKE EXCEL
 
 			while new_date < end_date_object:
 				temp = x.upper()
