@@ -188,9 +188,7 @@ def update_client_picker(ticker):
 
 def update_output(companies, start_date, end_date):
 	#print('You have selected "{}"'.format(companies))
-
 	hash = {}
-	
 	end_date_object = date.fromisoformat(end_date)
 
 	for x in companies: 
@@ -198,25 +196,20 @@ def update_output(companies, start_date, end_date):
 			start_date_object = date.fromisoformat(start_date)
 			new_date = start_date_object + timedelta(days=30)
 			prices = []
-
 			# NEED TO PULL YFINANCE DATA FOR EACH NEW_DATE
 			# MAYBE USE PANDAS TO STRUCURE DATA LIKE EXCEL
-
 			while new_date < end_date_object:
 				temp = x.upper()
+				# Use the new date to access the correct data
 				TICKER = yf.Ticker(temp)
+				print(TICKER.history(period = new_date)["open"])
 				price = TICKER.info['open']
 				prices.append(price)
 				new_date = new_date + timedelta(30)	
-				print(new_date)
-
-		hash[x] = prices
-
-		print(hash)			
+			hash[x] = prices
 
 		# This while loop isn't great. The yfinance stuff is accurate
 		# just need to get the right dates
-
 		# while begin < end_date:
 		# 	temp = x.upper()
 		# 	TICKER = yf.Ticker(temp)
@@ -225,10 +218,8 @@ def update_output(companies, start_date, end_date):
 		# 	begin = begin + datetime.timedelta(days=30) # 30 days?
 		# 	print(begin)
 
-	print(prices)
-
-
-	return make_graph(companies, prices)
+	print(hash)
+	# return make_graph(companies, hash)
 
 	# For loop through companies
 		# Access yfinance data
@@ -239,17 +230,16 @@ def update_output(companies, start_date, end_date):
 		# FOR ENTIRE TIME RANGE SO WE CAN JUST A CHART UP
 	# Now we have an array of tuples?
 
-
-def make_graph(companies, prices):
+def make_graph(companies, hash):
+	# I have a hash of numbers in "hash". I need to make an array 
+	# of numbers (average stock growth) to input into fig
 	fig = go.Figure(data=[go.Scatter(x=companies, y=prices)])
 
 	newGraph = html.Div(dcc.Graph(
 		id='output-subindustry-picker',
 		figure=fig
 	))
-
 	return newGraph
-
 
 						##### NOTES ####
 # INDUSTRY GROWTH --> LOOK AT % STOCK PRICE GROWTH MONTH OVER MONTH FOR 1 YEAR PRE-LAUNCH
