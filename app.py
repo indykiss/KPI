@@ -135,6 +135,8 @@ def update_output(date_value):
     [Input('input-date-range-picker', 'start_date'),
     Input('input-date-range-picker', 'end_date')])
 
+
+
 def update_output(start_date, end_date):
     string_prefix = 'You have selected: '
     if start_date is not None:
@@ -186,10 +188,17 @@ def update_client_picker(ticker):
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date')])
 
+
+# Using this jupyter notebook to try to figure things out
+# https://mybinder.org/v2/gh/ipython/ipython-in-depth/7e5ce96cc9251083979efdfc393425f1229a4a68?filepath=binder%2FIndex.ipynb
+
+
 def update_output(companies, start_date, end_date):
 	#print('You have selected "{}"'.format(companies))
 	hash = {}
 	end_date_object = date.fromisoformat(end_date)
+
+	print(end_date)
 
 	for x in companies: 
 		if start_date is not None:			
