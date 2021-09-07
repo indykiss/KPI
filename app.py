@@ -58,7 +58,15 @@ app.layout = html.Div([
         options=[
             {'label': 'Apple', 'value': 'AAPL'},
             {'label': 'Google', 'value': 'GOOGL'},
-            {'label': 'Facebook', 'value': 'FB'}
+            {'label': 'Facebook', 'value': 'FB'},
+			{'label': 'Costco', 'value': 'COST'},
+			{'label': 'IDK', 'value': 'AD'},
+			{'label': 'Shoprite', 'value': 'SHP'},
+			{'label': 'Spartan Nash', 'value': 'SPTN'},
+			{'label': 'Kroger', 'value': 'KR'},
+			{'label': 'Walgreens', 'value': 'WBA'},
+			{'label': 'Walmart', 'value': 'WMT'},
+			{'label': 'Wegmans', 'value': 'WEGMANS'}			
         ],
         value='AAPL'        
     ),
@@ -68,12 +76,19 @@ app.layout = html.Div([
 	dcc.Dropdown(
 		id='input-subindustry-picker',
 		options=[
-			{'label': 'Apple', 'value': 'AAPL'},
-			{'label': 'Google', 'value': 'GOOGL'},
-			{'label': 'Facebook', 'value': 'FB'}, 
-			{'label': 'Amazon', 'value': 'AMZN'}			
+            {'label': 'Apple', 'value': 'AAPL'},
+            {'label': 'Google', 'value': 'GOOGL'},
+            {'label': 'Facebook', 'value': 'FB'},
+			{'label': 'Costco', 'value': 'COST'},
+			{'label': 'IDK', 'value': 'AD'},
+			{'label': 'Shoprite', 'value': 'SHP'},
+			{'label': 'Spartan Nash', 'value': 'SPTN'},
+			{'label': 'Kroger', 'value': 'KR'},
+			{'label': 'Walgreens', 'value': 'WBA'},
+			{'label': 'Walmart', 'value': 'WMT'},
+			{'label': 'Wegmans', 'value': 'WEGMANS'}			
 		],
-		value=['GOOGL', 'FB'],
+		value=['COST', 'SHP', 'SPTN', 'KR', 'WBA'],
 		multi=True
 	), 
 
@@ -194,7 +209,10 @@ def update_client_picker(ticker):
 
 def update_output(companies, start_date, end_date):	
 	dict = {} # for debugging company : stock changes
-	growths_in_arrs = [] # for slightly easier averaging
+	
+	if start_date is not None:
+		growths_in_arrs = [] # for slightly easier averaging
+		dates_data = pd.date_range(start_date, end_date)
 	#  end_date_object = date.fromisoformat(end_date)
 
 	for x in companies: 
@@ -220,33 +238,33 @@ def update_output(companies, start_date, end_date):
 			dict[x] = stock_change
 			growths_in_arrs.append(stock_change)
 
-	return average_stock_growths(growths_in_arrs)
+	if start_date is not None:
+		return average_stock_growths(dates_data, growths_in_arrs)
 
 
-def average_stock_growths(growths_in_arrs):
+def average_stock_growths(dates, growths_in_arrs):
 	all_average_growths = []
 
-	print(growths_in_arrs)
+	num_days = len(growths_in_arrs[0])
+	i = 0
 
-	# I need to figure out what I need to do to get average
-	# stock growth
-	for single_co_growths in growths_in_arrs:
-		single_day_sum = 0
-		arr_len = len(single_co_growths)
+	while i < num_days:
+		sum = 0
+		for arr in growths_in_arrs:
+			sum += arr[i]
+		i += 1
 
-		print(arr_len)
-		# for day_growth in single_co_growths:
-			
+		avg = sum / len(growths_in_arrs) # not sure if divide correct
+		all_average_growths.append(avg)
 
-	print(all_average_growths)
-	# return make_graph(companies, hash)
+	return make_graph(dates, all_average_growths)
 
 	
 
-def make_graph(companies, hash):
+def make_graph(dates, avg_growth):
 	# I have a hash of numbers in "hash". I need to make an array 
 	# of numbers (average stock growth) to input into fig
-	fig = go.Figure(data=[go.Scatter(x=companies, y=prices)])
+	fig = go.Figure(data=[go.Scatter(x=dates, y=avg_growth)])
 
 	newGraph = html.Div(dcc.Graph(
 		id='output-subindustry-picker',
