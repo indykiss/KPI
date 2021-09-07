@@ -192,22 +192,103 @@ def update_client_picker(ticker):
 # https://mybinder.org/v2/gh/ipython/ipython-in-depth/7e5ce96cc9251083979efdfc393425f1229a4a68?filepath=binder%2FIndex.ipynb
 
 
-def update_output(companies, start_date, end_date):
-	#print('You have selected "{}"'.format(companies))
-	hash = {}
-	end_date_object = date.fromisoformat(end_date)
+def update_output(companies, start_date, end_date):	
+	dict = {} # for debugging company : stock changes
+	growths_in_arrs = [] # for slightly easier averaging
+	#  end_date_object = date.fromisoformat(end_date)
 
 	for x in companies: 
 		if start_date is not None:			
-			start_date_object = date.fromisoformat(start_date)
-			new_date = start_date_object + timedelta(days=30)
-			prices = []
+			# start_date_object = date.fromisoformat(start_date)
+			# new_date = start_date_object + timedelta(days=30)
 
 			df = pdr.get_data_yahoo(x, start_date, end_date)
 			stock_data = df['Open']
-			for day in stock_data:
-				
+			prev = 0
+			stock_change = []
 
+			# need to double check that percent change is accurate
+			for day_price in stock_data:
+				if prev == 0:
+				    prev = day_price
+				else:
+					percent_change = ((day_price - prev) / prev) * 100 
+					rounded = round(percent_change, 3)
+					stock_change.append(rounded)
+
+			# after finishing creating an array of % changes from start to end
+			dict[x] = stock_change
+			growths_in_arrs.append(stock_change)
+
+	return average_stock_growths(growths_in_arrs)
+
+
+def average_stock_growths(growths_in_arrs):
+	all_average_growths = []
+
+	print(growths_in_arrs)
+
+	# I need to figure out what I need to do to get average
+	# stock growth
+	for single_co_growths in growths_in_arrs:
+		single_day_sum = 0
+		arr_len = len(single_co_growths)
+
+		print(arr_len)
+		# for day_growth in single_co_growths:
+			
+
+	print(all_average_growths)
+	# return make_graph(companies, hash)
+
+	
+
+def make_graph(companies, hash):
+	# I have a hash of numbers in "hash". I need to make an array 
+	# of numbers (average stock growth) to input into fig
+	fig = go.Figure(data=[go.Scatter(x=companies, y=prices)])
+
+	newGraph = html.Div(dcc.Graph(
+		id='output-subindustry-picker',
+		figure=fig
+	))
+	return newGraph
+
+
+
+						##### NOTES ####
+# INDUSTRY GROWTH --> LOOK AT % STOCK PRICE GROWTH MONTH OVER MONTH FOR 1 YEAR PRE-LAUNCH
+# AND 1 YEAR POST LAUNCH. USE GROCERY STORE SUBINDUSTRY AS EXAMPLE 
+
+# MARKET CAPITALIZATION WEIGHTED IS ANOTHER WAY TO MAKE THE GRAPH
+# MAYBE AN EXTEND FEATURE
+
+# ANOTHER STEP IS LOOKING AT HOW TO BUILD A GRAPH WITH THE DATA 
+# https://medium.com/swlh/how-to-create-a-dashboard-to-dominate-the-stock-market-using-python-and-dash-c35a12108c93
+# DOES A GREAT JOB OF EXPLAINING WHAT TO DO 
+
+# Still use the grocery store data EVEN THOUGH IT DOESNT PROVE OUTCOME
+
+# Helper functions to be added into layout/ callbacks 
+# def display_value(value):
+#     return 'You have selected "{}"'.format(value)
+
+
+
+
+# IDK JUST OLDER STUFF THAT I'M NOT CURRENTLY USING. 
+# DELETE THIS SOON PROBABLY 
+
+# def update_output(companies, start_date, end_date):
+# 	#print('You have selected "{}"'.format(companies))
+	
+# 	hash = {}
+# 	#  end_date_object = date.fromisoformat(end_date)
+
+# 	for x in companies: 
+# 		if start_date is not None:			
+			# start_date_object = date.fromisoformat(start_date)
+			# new_date = start_date_object + timedelta(days=30)
 			# NEED TO PULL YFINANCE DATA FOR EACH NEW_DATE
 			# MAYBE USE PANDAS TO STRUCURE DATA LIKE EXCEL
 
@@ -232,52 +313,6 @@ def update_output(companies, start_date, end_date):
 		# 	prices.append(price)
 		# 	begin = begin + datetime.timedelta(days=30) # 30 days?
 		# 	print(begin)
-
-
-	# return make_graph(companies, hash)
-
-	# For loop through companies
-		# Access yfinance data
-			# Possibly helper function because I need to 
-			# pull open prices for each 1st Monday of the month
-			# from start to end range  
-		# MAYBE START SIMPLE AND JUST PLOT ALL OPENS 
-		# FOR ENTIRE TIME RANGE SO WE CAN JUST A CHART UP
-	# Now we have an array of tuples?
-
-def make_graph(companies, hash):
-	# I have a hash of numbers in "hash". I need to make an array 
-	# of numbers (average stock growth) to input into fig
-	fig = go.Figure(data=[go.Scatter(x=companies, y=prices)])
-
-	newGraph = html.Div(dcc.Graph(
-		id='output-subindustry-picker',
-		figure=fig
-	))
-	return newGraph
-
-						##### NOTES ####
-# INDUSTRY GROWTH --> LOOK AT % STOCK PRICE GROWTH MONTH OVER MONTH FOR 1 YEAR PRE-LAUNCH
-# AND 1 YEAR POST LAUNCH. USE GROCERY STORE SUBINDUSTRY AS EXAMPLE 
-
-# MARKET CAPITALIZATION WEIGHTED IS ANOTHER WAY TO MAKE THE GRAPH
-# MAYBE AN EXTEND FEATURE
-
-# ANOTHER STEP IS LOOKING AT HOW TO BUILD A GRAPH WITH THE DATA 
-# https://medium.com/swlh/how-to-create-a-dashboard-to-dominate-the-stock-market-using-python-and-dash-c35a12108c93
-# DOES A GREAT JOB OF EXPLAINING WHAT TO DO 
-
-# Still use the grocery store data EVEN THOUGH IT DOESNT PROVE OUTCOME
-
-# Helper functions to be added into layout/ callbacks 
-# def display_value(value):
-#     return 'You have selected "{}"'.format(value)
-
-
-
-
-# IDK JUST OLDER STUFF THAT I'M NOT CURRENTLY USING. 
-# DELETE THIS SOON PROBABLY 
 
 
 
