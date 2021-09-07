@@ -9,7 +9,8 @@ from dash.dependencies import Input, Output # So I can simplify callback
 import plotly 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import pandas
+import pandas as pd 
+import pandas_datareader as pdr
 import re
 import yfinance as yf
 from datetime import date, datetime, timedelta
@@ -196,24 +197,31 @@ def update_output(companies, start_date, end_date):
 	hash = {}
 	end_date_object = date.fromisoformat(end_date)
 
-	print(end_date)
-
 	for x in companies: 
 		if start_date is not None:			
 			start_date_object = date.fromisoformat(start_date)
 			new_date = start_date_object + timedelta(days=30)
 			prices = []
+
+			df = pdr.get_data_yahoo(x, start_date, end_date)
+			stock_data = df['Open']
+			for day in stock_data:
+				
+
 			# NEED TO PULL YFINANCE DATA FOR EACH NEW_DATE
 			# MAYBE USE PANDAS TO STRUCURE DATA LIKE EXCEL
-			while new_date < end_date_object:
-				temp = x.upper()
-				# Use the new date to access the correct data
-				TICKER = yf.Ticker(temp)
-				print(TICKER.history(period = new_date)["open"])
-				price = TICKER.info['open']
-				prices.append(price)
-				new_date = new_date + timedelta(30)	
-			hash[x] = prices
+
+			# IDK MAYBE TRYING TO REPLACE BELOW WITH PANDAS
+			# while new_date < end_date_object:
+			# 	temp = x.upper()
+			# 	# Use the new date to access the correct data
+			# 	TICKER = yf.Ticker(temp)
+			# 	# print(TICKER.history(period = new_date)["open"])
+
+			# 	price = TICKER.info['open']
+			# 	prices.append(price)
+			# 	new_date = new_date + timedelta(30)	
+			# hash[x] = prices
 
 		# This while loop isn't great. The yfinance stuff is accurate
 		# just need to get the right dates
@@ -225,7 +233,7 @@ def update_output(companies, start_date, end_date):
 		# 	begin = begin + datetime.timedelta(days=30) # 30 days?
 		# 	print(begin)
 
-	print(hash)
+
 	# return make_graph(companies, hash)
 
 	# For loop through companies
