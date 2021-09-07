@@ -61,7 +61,7 @@ app.layout = html.Div([
             {'label': 'Facebook', 'value': 'FB'},
 			{'label': 'Costco', 'value': 'COST'},
 			{'label': 'IDK', 'value': 'AD'},
-			{'label': 'Shoprite', 'value': 'SHP'},
+			{'label': 'Shoprite', 'value': 'SRGHY'},
 			{'label': 'Spartan Nash', 'value': 'SPTN'},
 			{'label': 'Kroger', 'value': 'KR'},
 			{'label': 'Walgreens', 'value': 'WBA'},
@@ -81,14 +81,14 @@ app.layout = html.Div([
             {'label': 'Facebook', 'value': 'FB'},
 			{'label': 'Costco', 'value': 'COST'},
 			{'label': 'IDK', 'value': 'AD'},
-			{'label': 'Shoprite', 'value': 'SHP'},
+			{'label': 'Shoprite', 'value': 'SRGHY'},
 			{'label': 'Spartan Nash', 'value': 'SPTN'},
 			{'label': 'Kroger', 'value': 'KR'},
 			{'label': 'Walgreens', 'value': 'WBA'},
 			{'label': 'Walmart', 'value': 'WMT'},
 			{'label': 'Wegmans', 'value': 'WEGMANS'}			
 		],
-		value=['COST', 'SHP', 'SPTN', 'KR', 'WBA'],
+		value=['COST', 'SRGHY', 'SPTN', 'KR', 'WBA'],
 		multi=True
 	), 
 
@@ -230,13 +230,16 @@ def update_output(companies, start_date, end_date):
 				if prev == 0:
 				    prev = day_price
 				else:
-					percent_change = ((day_price - prev) / prev) * 100 
+					percent_change = ((day_price - prev) / day_price) * 100 
 					rounded = round(percent_change, 3)
 					stock_change.append(rounded)
+					prev = day_price
 
 			# after finishing creating an array of % changes from start to end
 			dict[x] = stock_change
 			growths_in_arrs.append(stock_change)
+
+	print(dict)
 
 	if start_date is not None:
 		return average_stock_growths(dates_data, growths_in_arrs)
