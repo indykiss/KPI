@@ -176,7 +176,6 @@ def update_client_picker(ticker):
     return cards
 
 
-
 # Select the subindustry competitors
 # OKAY now lets do a graph over time WITH companies AND the date info?
 # HOW TO INCORPORATE DATA ACROSS BOTH DATE RANGE PICKER AND 
