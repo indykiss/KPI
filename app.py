@@ -47,11 +47,12 @@ app.layout = html.Div([
         id='input-date-range-picker',
         min_date_allowed=date(2000, 1, 1),
         max_date_allowed=date.today(),
-        initial_visible_month=date(2021, 8, 5),
-        end_date=date(2021, 8, 25)
+        initial_visible_month=date(2021, 9, 1),
+        end_date=date(2021, 9, 1)
     ),
 
 	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs    
+	# Work on this now
     html.Div("Select the client"),
     dcc.Dropdown(
         id='input-client-picker',
@@ -189,19 +190,21 @@ def update_client_picker(ticker):
     return cards
 
 
-# Select the subindustry competitors
-# OKAY now lets do a graph over time WITH companies AND the date info?
-# HOW TO INCORPORATE DATA ACROSS BOTH DATE RANGE PICKER AND 
-# COMPANY SELECTOR TO GET GRAPH
+
+
+# Select the custom index competitors
+
+# 1. Grab each one's stock price data from start to end date
+# 2. Calculates stock price growth for each company over time
+# 3. Calculates average growth for the custom index
+
+# Confirmed that all math works in gsheet with manual data from yahoo finance: 
+# https://docs.google.com/spreadsheets/d/1yQ6AgjBPN3EHST2TDfmaRXgS0VVP54qXQwhmxpw18Fs/edit#gid=0 
 @app.callback(
     Output('output-subindustry-picker', 'children'),
     [Input('input-subindustry-picker', 'value'), 
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date')])
-
-
-# Using this jupyter notebook to try to figure things out
-# https://mybinder.org/v2/gh/ipython/ipython-in-depth/7e5ce96cc9251083979efdfc393425f1229a4a68?filepath=binder%2FIndex.ipynb
 
 
 # Would be good to divide into a couple functions
@@ -253,17 +256,14 @@ def average_stock_growths(dates, growths_in_arrs):
 			sum += arr[i]
 		i += 1
 
-		avg = sum / len(growths_in_arrs) # not sure if divide correct
+		avg = sum / len(growths_in_arrs)
 		rounded = round(avg, 3)
 		all_average_growths.append(rounded)
 
 	return make_graph(dates, all_average_growths)
 
-	
 
 def make_graph(dates, avg_growth):
-	# I have a hash of numbers in "hash". I need to make an array 
-	# of numbers (average stock growth) to input into fig
 	fig = go.Figure(data=[go.Scatter(x=dates, y=avg_growth)])
 
 	newGraph = html.Div(dcc.Graph(
@@ -274,28 +274,29 @@ def make_graph(dates, avg_growth):
 
 
 
+
+
 						##### NOTES ####
 # INDUSTRY GROWTH --> LOOK AT % STOCK PRICE GROWTH MONTH OVER MONTH FOR 1 YEAR PRE-LAUNCH
 # AND 1 YEAR POST LAUNCH. USE GROCERY STORE SUBINDUSTRY AS EXAMPLE 
 
 # MARKET CAPITALIZATION WEIGHTED IS ANOTHER WAY TO MAKE THE GRAPH
-# MAYBE AN EXTEND FEATURE
+# MAYBE AN EXTENDED FEATURE
 
 # ANOTHER STEP IS LOOKING AT HOW TO BUILD A GRAPH WITH THE DATA 
 # https://medium.com/swlh/how-to-create-a-dashboard-to-dominate-the-stock-market-using-python-and-dash-c35a12108c93
 # DOES A GREAT JOB OF EXPLAINING WHAT TO DO 
 
-# Still use the grocery store data EVEN THOUGH IT DOESNT PROVE OUTCOME
-
-# Helper functions to be added into layout/ callbacks 
-# def display_value(value):
-#     return 'You have selected "{}"'.format(value)
 
 
 
 
 # IDK JUST OLDER STUFF THAT I'M NOT CURRENTLY USING. 
 # DELETE THIS SOON PROBABLY 
+
+# I couldn't get output working bc of some antivirus or version thing, so dropping jupyter right now. 
+# 
+# https://mybinder.org/v2/gh/ipython/ipython-in-depth/7e5ce96cc9251083979efdfc393425f1229a4a68?filepath=binder%2FIndex.ipynb
 
 # def update_output(companies, start_date, end_date):
 # 	#print('You have selected "{}"'.format(companies))
