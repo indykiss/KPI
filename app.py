@@ -184,10 +184,7 @@ def update_client_picker(ticker):
         
     cards = [ 
 	dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName'])),
-	dbc.Col(make_card("Previous Close ", "secondary", TICKER.info['previousClose'])),
-    dbc.Col(make_card("Open", "secondary", TICKER.info['open'])),
-    dbc.Col(make_card("Sector", 'secondary', TICKER.info['sector'])),
-    dbc.Col(make_card("50d Avg Price", 'secondary', TICKER.info['fiftyDayAverage']))
+    dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
     ] #end cards list
     return cards
 
@@ -207,6 +204,7 @@ def update_client_picker(ticker):
 # https://mybinder.org/v2/gh/ipython/ipython-in-depth/7e5ce96cc9251083979efdfc393425f1229a4a68?filepath=binder%2FIndex.ipynb
 
 
+# Would be good to divide into a couple functions
 def update_output(companies, start_date, end_date):	
 	dict = {} # for debugging company : stock changes
 	
@@ -239,8 +237,6 @@ def update_output(companies, start_date, end_date):
 			dict[x] = stock_change
 			growths_in_arrs.append(stock_change)
 
-	print(dict)
-
 	if start_date is not None:
 		return average_stock_growths(dates_data, growths_in_arrs)
 
@@ -258,7 +254,8 @@ def average_stock_growths(dates, growths_in_arrs):
 		i += 1
 
 		avg = sum / len(growths_in_arrs) # not sure if divide correct
-		all_average_growths.append(avg)
+		rounded = round(avg, 3)
+		all_average_growths.append(rounded)
 
 	return make_graph(dates, all_average_growths)
 
