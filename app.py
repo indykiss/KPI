@@ -42,13 +42,15 @@ app.layout = html.Div([
         date=date(2021, 8, 1)
     ),
 
+	# Works well enough. 2 years working ok
 	html.Div("Select the time range. Please select a starting date before launch and an end date after launch. We recommend 1 year BEFORE launch and 1 year AFTER launch. Please note that selecting competitors that were not public during this entire range will result in skewed data."),
     dcc.DatePickerRange(
         id='input-date-range-picker',
         min_date_allowed=date(2000, 1, 1),
-        max_date_allowed=date.today(),
+        max_date_allowed=date.today(), # in deployment, would need to make this callback to be dynamic: https://stackoverflow.com/questions/62608204/dash-datepicker-max-date-allowed-as-current-date-not-working-properly
         initial_visible_month=date(2021, 9, 1),
-        end_date=date(2021, 9, 1)
+		clearable=True
+		#calendar_orientation="vertical",
     ),
 
 	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs    
@@ -213,7 +215,7 @@ def update_output(companies, start_date, end_date):
 	
 	if start_date is not None:
 		growths_in_arrs = [] # for slightly easier averaging
-		dates_data = pd.date_range(start_date, end_date)
+		dates_data = pd.date_range(start_date, end_date, periods=6)
 	#  end_date_object = date.fromisoformat(end_date)
 
 	for x in companies: 
@@ -250,6 +252,7 @@ def average_stock_growths(dates, growths_in_arrs):
 	num_days = len(growths_in_arrs[0])
 	i = 0
 
+	#  list index out of range error here
 	while i < num_days:
 		sum = 0
 		for arr in growths_in_arrs:
