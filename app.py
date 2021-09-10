@@ -55,6 +55,14 @@ app.layout = html.Div([
 
 	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs    
 	# Work on this now
+
+	dcc.Input(
+			id='input-yf-client-ticker',
+			options = options,
+			value = ['SPY'], 
+			multi = True
+	),	
+
     html.Div("Select the client"),
     dcc.Dropdown(
         id='input-client-picker',
@@ -102,35 +110,14 @@ app.layout = html.Div([
     html.Div(id='output-date-picker'),
     html.Div(id='output-client-picker'),
 	html.Div(id='output-date-range-picker'),
-	html.Div(id='output-subindustry-picker')
-
-
-# IDK, copied and pasted
-	# html.Div([
-	# dbc.Row([dbc.Col(make_card("Enter Ticker", "success", ticker_inputs('ticker-input', 'date-picker', 36)))]) #row 1
-    
-	# # Should be chart at some point in the future
-	# , dbc.Row([
-	# 		dbc.Col([dbc.Row([dbc.Alert("__Charts__", color="primary")], justify = 'center')
-	# 		,dbc.Row(html.Div(id='x-vol-1'), justify = 'center')
-	# 		, dcc.Interval(
-	# 				id='interval-component',
-	# 				interval=1*150000, # in milliseconds
-	# 				n_intervals=0)   
-	# 		, dcc.Interval(
-	# 				id='interval-component2',
-	# 				interval=1*60000, # in milliseconds
-	# 				n_intervals=0)      
-	# 				])#end col
-	# 		])#end row           
-	# ]) #end div
+	html.Div(id='output-subindustry-picker'), 
+	html.Div(id='output-yf-client-ticker')	
 ])
 
 
 
 # Back end stuffs 
 # Each input/ output uses it's own callback   
-
 # Callbacks
 
 # Select date of launch
@@ -154,8 +141,6 @@ def update_output(date_value):
     [Input('input-date-range-picker', 'start_date'),
     Input('input-date-range-picker', 'end_date')])
 
-
-
 def update_output(start_date, end_date):
     string_prefix = 'You have selected: '
     if start_date is not None:
@@ -172,6 +157,13 @@ def update_output(start_date, end_date):
         return string_prefix
 
 
+# Select client BUT using yfinance to look up tickers, not hardcoded 
+@app.callback(
+    Output('output-yf-client-ticker, 'children'),
+    Input('input-yf-client-ticker', 'value'))
+
+def update_yf_client_ticker(ticker):
+	print("yo I work")
 
 
 # Select client we're targeting
