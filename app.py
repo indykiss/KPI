@@ -54,13 +54,14 @@ app.layout = html.Div([
     ),
 
 	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs    
-	# Work on this now
-
+	# Pausing on this because a little tougher to implement search
+	html.Div("This would be a dynamic search through yfiance for a ticker"),
 	dcc.Input(
-			id='input-yf-client-ticker',
-			options = options,
-			value = ['SPY'], 
-			multi = True
+			id='input-yf-client-ticker', 
+			type = 'search'
+			# options = options,
+			# value = ['SPY'], 
+			# multi = True
 	),	
 
     html.Div("Select the client"),
@@ -159,7 +160,7 @@ def update_output(start_date, end_date):
 
 # Select client BUT using yfinance to look up tickers, not hardcoded 
 @app.callback(
-    Output('output-yf-client-ticker, 'children'),
+    Output('output-yf-client-ticker', 'children'),
     Input('input-yf-client-ticker', 'value'))
 
 def update_yf_client_ticker(ticker):
@@ -198,18 +199,21 @@ def update_client_picker(ticker):
     Output('output-subindustry-picker', 'children'),
     [Input('input-subindustry-picker', 'value'), 
 	Input('input-date-range-picker', 'start_date'), 
-	Input('input-date-range-picker', 'end_date')])
+	Input('input-date-range-picker', 'end_date'),
+	Input('input-client-picker', 'value')])
 
 
 # Would be good to divide into a couple functions
-def update_output(companies, start_date, end_date):	
+def update_output(companies, start_date, end_date, client):	
 	dict = {} # for debugging company : stock changes
-	
+	client_growth = []
+
 	if start_date is not None:
 		growths_in_arrs = [] # for slightly easier averaging
 		dates_data = pd.date_range(start_date, end_date, periods=6)
 	#  end_date_object = date.fromisoformat(end_date)
 
+	# Probably too slow, causing lag?
 	for x in companies: 
 		if start_date is not None:			
 			# start_date_object = date.fromisoformat(start_date)
@@ -217,34 +221,36 @@ def update_output(companies, start_date, end_date):
 
 			df = pdr.get_data_yahoo(x, start_date, end_date)
 			stock_data = df['Open']
-			prev = 0
-			stock_change = []
+			prev_day = 0
+			stock_change = []				
 
-			# need to double check that percent change is accurate
+			# Calculates growth over time for each company 
 			for day_price in stock_data:
-				if prev == 0:
-				    prev = day_price
+				if prev_day == 0:
+				    prev_day = day_price
 				else:
-					percent_change = ((day_price - prev) / day_price) * 100 
+					percent_change = ((day_price - prev_day) / day_price) * 100 
 					rounded = round(percent_change, 3)
 					stock_change.append(rounded)
-					prev = day_price
+					if x == client:
+						client_growth.append(rounded)
+					prev_day = day_price
 
 			# after finishing creating an array of % changes from start to end
 			dict[x] = stock_change
 			growths_in_arrs.append(stock_change)
 
 	if start_date is not None:
-		return average_stock_growths(dates_data, growths_in_arrs)
+		return average_stock_growths(dates_data, growths_in_arrs, client_growth)
 
 
-def average_stock_growths(dates, growths_in_arrs):
+def average_stock_growths(dates, growths_in_arrs, client_growth):
 	all_average_growths = []
 
 	num_days = len(growths_in_arrs[0])
 	i = 0
 
-	#  list index out of range error here
+	#  list index out of range error here sometimes
 	while i < num_days:
 		sum = 0
 		for arr in growths_in_arrs:
@@ -255,19 +261,33 @@ def average_stock_growths(dates, growths_in_arrs):
 		rounded = round(avg, 3)
 		all_average_growths.append(rounded)
 
-	return make_graph(dates, all_average_growths)
+	return make_graph(dates, all_average_growths, client_growth)
 
 
-def make_graph(dates, avg_growth):
-	fig = go.Figure(data=[go.Scatter(x=dates, y=avg_growth)])
+def make_graph(dates, avg_growth, client_growth):
+	fig = go.Figure(
+		data=[go.Scatter(x=dates, y=avg_growth)],
+		layout=go.Layout(
+        	title=go.layout.Title(text="Custom index growth over time"))
+	)
 
 	newGraph = html.Div(dcc.Graph(
 		id='output-subindustry-picker',
 		figure=fig
 	))
+
+	# 1. Work on a trace line for the client growth alone 
+	# 2. Build some sort of dot over launch date
+	# 3. Fix the maths [average_stock_growths], change 
+	# 
+
+	print(client_growth)
+	# reference_line = [go.Scatter(x=dates, y=client_growth)]
+
 	return newGraph
 
 
+# Add a trace line over graph, different color 
 
 
 
