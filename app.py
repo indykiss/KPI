@@ -200,11 +200,12 @@ def update_client_picker(ticker):
     [Input('input-subindustry-picker', 'value'), 
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date'),
-	Input('input-client-picker', 'value')])
+	Input('input-client-picker', 'value'),
+	Input('input-date-picker', 'date')])
 
 
 # Would be good to divide into a couple functions
-def update_output(companies, start_date, end_date, client):	
+def update_output(companies, start_date, end_date, client, launch_date):	
 	dict = {} # for debugging company : stock changes
 	client_growth = []
 
@@ -244,6 +245,8 @@ def update_output(companies, start_date, end_date, client):
 		return average_stock_growths(dates_data, growths_in_arrs, client_growth)
 
 
+
+
 def average_stock_growths(dates, growths_in_arrs, client_growth):
 	all_average_growths = []
 
@@ -281,8 +284,12 @@ def make_graph(dates, avg_growth, client_growth):
 	# 3. Fix the maths [average_stock_growths], change 
 	# 
 
-	print(client_growth)
-	# reference_line = [go.Scatter(x=dates, y=client_growth)]
+
+	reference_line2 = go.Scatter(x=dates,
+                            y=client_growth,
+                            # showlegend=False
+							)
+	fig.add_trace(reference_line2)
 
 	return newGraph
 
