@@ -245,6 +245,10 @@ def update_output(companies, start_date, end_date, client, launch_date):
 		return average_stock_growths(dates_data, growths_in_arrs, client_growth)
 
 
+def calculate_pre_launch(companies):
+
+
+def calculate_post_launch(companies)
 
 
 def average_stock_growths(dates, growths_in_arrs, client_growth):
