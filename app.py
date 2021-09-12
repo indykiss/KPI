@@ -55,7 +55,7 @@ app.layout = html.Div([
 
 	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs    
 	# Pausing on this because a little tougher to implement search
-	html.Div("This would be a dynamic search through yfiance for a ticker"),
+	html.Div("This would be a dynamic search through yfinance for a ticker"),
 	dcc.Input(
 			id='input-yf-client-ticker', 
 			type = 'search'
@@ -244,12 +244,8 @@ def update_output(companies, start_date, end_date, client, launch_date):
 	if start_date is not None:
 		return average_stock_growths(dates_data, growths_in_arrs, client_growth)
 
-
-def calculate_pre_launch(companies):
-
-
-def calculate_post_launch(companies)
-
+# def calculate_pre_launch(companies):
+# def calculate_post_launch(companies): 
 
 def average_stock_growths(dates, growths_in_arrs, client_growth):
 	all_average_growths = []
