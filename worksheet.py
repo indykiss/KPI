@@ -3,14 +3,16 @@
 # What am I doing? 
 
 # Algorithm:
-# - Need to figure out how to graph the two lines
-#     - Build the helper functions needed. 
-#         - Maybe just need 1 "calculate companies in arr growth" 
-#         - Before launch date, need all companies 
-#         - After launch date, all except client 
-#         - Problem is in how I'm calculcating growth now. I'm doing 
-#         for each company, calculate growth from start to end date.
-#         What I need to do is calculate growth from start to end, changing cos
+# - Need to figure out how to graph the two lines such that they overlap
+# THEN deviate for client growth 
+
+# - Build the helper functions needed. 
+#  - Maybe just need 1 "calculate companies in arr growth" 
+#  - Before launch date, need all companies 
+#  - After launch date, all except client 
+#  - Problem is in how I'm calculcating growth now. I'm doing 
+#  for each company, calculate growth from start to end date.
+#  What I need to do is calculate growth from start to end, changing cos
 
 # Trying to basically get the actual two line graph bit is priority. 
 
@@ -26,6 +28,9 @@ launch_date = 9/5/2021
 yfinance API --> input a ticker & date, gets stock price at open on date
 
 
+# I am working on these 4 functions here: 
+# Trying to copy the logics in the left panel to this, 
+# but switching "for x in companies" to date specific data
 def main(companies, start_date, end_date, launch_date, client):
     all_companies = companies.append(client)
 
