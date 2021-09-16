@@ -1,8 +1,11 @@
 # Working notes, please ignore for now!
 
-Sept 12 Notes:
+Sept 14 Notes:
+Working on now/ in PMs
 - Need to figure out yfinance ticker look up
     - Can implement for both client and custom index, basically same function
+
+Work on this in AM/ early PM when brain is awake
 - Need to figure out how to graph the two lines
     - Build the helper functions needed. 
         - Maybe just need 1 "calculate companies in arr growth" 
