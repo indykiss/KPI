@@ -163,8 +163,17 @@ def update_output(start_date, end_date):
     Output('output-yf-client-ticker', 'children'),
     Input('input-yf-client-ticker', 'value'))
 
+# I'm working on this now
 def update_yf_client_ticker(ticker):
-	print("yo I work")
+    string_answer = 'You have selected: '
+
+	# if input is accurate ticker
+    if ticker is not None: # switch for is a ticker
+        string_answer = string_answer + ticker
+    else:
+        string_answer = 'This is not a valid ticker. Try again.'
+
+    return string_answer
 
 
 # Select client we're targeting
