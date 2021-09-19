@@ -232,7 +232,9 @@ def update_output(companies, start_date, end_date, client, launch_date):
 			df = pdr.get_data_yahoo(x, start_date, end_date)
 			stock_data = df['Open']
 			prev_day = 0
-			stock_change = []				
+			stock_change = []	
+
+			print(stock_data)			
 
 			# Calculates growth over time for each company 
 			for day_price in stock_data:
