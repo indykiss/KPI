@@ -212,73 +212,155 @@ def update_client_picker(ticker):
 	Input('input-client-picker', 'value'),
 	Input('input-date-picker', 'date')])
 
+def update_output(companies, start_date, end_date, launch_date, client):
+    all_companies = companies.append(client)
 
-# Would be good to divide into a couple functions
-def update_output(companies, start_date, end_date, client, launch_date):	
-	dict = {} # for debugging company : stock changes
-	client_growth = []
+    if start_date is not None:
+        dates_data = pd.date_range(start_date, end_date, periods=6)
 
-	if start_date is not None:
-		growths_in_arrs = [] # for slightly easier averaging
-		dates_data = pd.date_range(start_date, end_date, periods=6)
-	#  end_date_object = date.fromisoformat(end_date)
+    # Both lines will have all companies' avg growth over time
+    pre_launch_all_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch_date)
+    # After launch date, the subindustry growth rate is different 
+    post_launch_subind_avgs = calculate_avg_growth_over_time(companies, launch_date, end_date)
+    # we're adding client growth as a trace line over custom index
+    client_post_launch_snippet = calculate_avg_growth_over_time([client], launch_date, end_date)
 
-	# Probably too slow, causing lag?
-	for x in companies: 
-		if start_date is not None:			
-			# start_date_object = date.fromisoformat(start_date)
-			# new_date = start_date_object + timedelta(days=30)
+    client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
 
-			df = pdr.get_data_yahoo(x, start_date, end_date)
-			stock_data = df['Open']
-			prev_day = 0
-			stock_change = []	
+    all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
 
-			print(stock_data)			
+    return make_graph(dates_data, all_growths, client_growth)
 
-			# Calculates growth over time for each company 
-			for day_price in stock_data:
-				if prev_day == 0:
-				    prev_day = day_price
-				else:
-					percent_change = ((day_price - prev_day) / day_price) * 100 
-					rounded = round(percent_change, 3)
-					stock_change.append(rounded)
-					if x == client:
-						client_growth.append(rounded)
-					prev_day = day_price
+# we can change the start/ end date to be start_date to launch then launch to end_date
+def calculate_avg_growth_over_time(companies, start_date, end_date): 
+    # Will need some sort of helper function most likely 
+    all_growths = []
+    
+    for x in companies: 
+        if start_date is not None:
+            df = pdr.get_data_yahoo(x, start_date, end_date)
+            stock_data = df['Open']
+            prev_day = 0
+            stock_percent_change = []   
+              
+            for day_price in stock_data:
+                    if prev_day == 0:
+                        prev_day = day_price
+                    else:
+                        percent_change = ((day_price - prev_day) / day_price) * 100 
+                        rounded = round(percent_change, 3)
+                        stock_percent_change.append(rounded)
 
-			# after finishing creating an array of % changes from start to end
-			dict[x] = stock_change
-			growths_in_arrs.append(stock_change)
+                        prev_day = day_price
+                        all_growths.append(stock_percent_change)
+            
+    if start_date is not None:
+        return avg_math(all_growths)
 
-	if start_date is not None:
-		return average_stock_growths(dates_data, growths_in_arrs, client_growth)
-
-# def calculate_pre_launch(companies):
-# def calculate_post_launch(companies): 
-
-def average_stock_growths(dates, growths_in_arrs, client_growth):
+# Would return an arr of stock price growth averages
+def avg_math(all_growths):
 	all_average_growths = []
 
-	num_days = len(growths_in_arrs[0])
+	num_days = len(all_growths[0])
 	i = 0
 
 	#  list index out of range error here sometimes
 	while i < num_days:
 		sum = 0
-		for arr in growths_in_arrs:
+		for arr in all_growths:
 			sum += arr[i]
 		i += 1
 
-		avg = sum / len(growths_in_arrs)
+		avg = sum / len(all_growths)
 		rounded = round(avg, 3)
-		all_average_growths.append(rounded)
+		all_average_growths.append(rounded)    
 
-	return make_graph(dates, all_average_growths, client_growth)
+def make_graph(dates, all_growths, client_growth):
+	fig = go.Figure(
+		data=[go.Scatter(x=dates, y=all_growths)],
+		layout=go.Layout(
+        	title=go.layout.Title(text="Custom index growth over time"))
+	)
+	newGraph = html.Div(dcc.Graph(
+		id='output-subindustry-picker',
+		figure=fig
+	))
+	reference_line2 = go.Scatter(x=dates,
+                            y=client_growth,
+                            # showlegend=False
+							)
+	fig.add_trace(reference_line2)
+
+	return newGraph    
 
 
-def make_graph(dates, avg_growth, client_growth):
+
+
+
+# These next 3 functions are perfect and work VERY well
+# I'm just commenting out so I can try the new versions of 
+# these functions, so we can add client growth trace
+# Would be good to divide into a couple functions
+
+# def update_output(companies, start_date, end_date, client, launch_date):	
+# 	dict = {} # for debugging company : stock changes
+# 	client_growth = []
+
+# 	if start_date is not None:
+# 		growths_in_arrs = [] # for slightly easier averaging
+# 		dates_data = pd.date_range(start_date, end_date, periods=6)
+# 	#  end_date_object = date.fromisoformat(end_date)
+
+# 	# Probably too slow, causing lag?
+# 	for x in companies: 
+# 		if start_date is not None:			
+# 			# start_date_object = date.fromisoformat(start_date)
+# 			# new_date = start_date_object + timedelta(days=30)
+
+# 			df = pdr.get_data_yahoo(x, start_date, end_date)
+# 			stock_data = df['Open']
+# 			prev_day = 0
+# 			stock_change = []	
+
+# 			print(stock_data)			
+
+# 			# Calculates growth over time for each company 
+# 			for day_price in stock_data:
+# 				if prev_day == 0:
+# 				    prev_day = day_price
+# 				else:
+# 					percent_change = ((day_price - prev_day) / day_price) * 100 
+# 					rounded = round(percent_change, 3)
+# 					stock_change.append(rounded)
+# 					if x == client:
+# 						client_growth.append(rounded)
+# 					prev_day = day_price
+
+# 			# after finishing creating an array of % changes from start to end
+# 			dict[x] = stock_change
+# 			growths_in_arrs.append(stock_change)
+
+# 	if start_date is not None:
+# 		return average_stock_growths(dates_data, growths_in_arrs, client_growth)
+
+# def average_stock_growths(dates, growths_in_arrs, client_growth):
+# 	all_average_growths = []
+# 	num_days = len(growths_in_arrs[0])
+# 	i = 0
+
+# 	#  list index out of range error here sometimes
+# 	while i < num_days:
+# 		sum = 0
+# 		for arr in growths_in_arrs:
+# 			sum += arr[i]
+# 		i += 1
+
+# 		avg = sum / len(growths_in_arrs)
+# 		rounded = round(avg, 3)
+# 		all_average_growths.append(rounded)
+# 	return make_graph(dates, all_average_growths, client_growth)
+
+# def make_graph(dates, avg_growth, client_growth):
 	fig = go.Figure(
 		data=[go.Scatter(x=dates, y=avg_growth)],
 		layout=go.Layout(
@@ -289,13 +371,6 @@ def make_graph(dates, avg_growth, client_growth):
 		id='output-subindustry-picker',
 		figure=fig
 	))
-
-	# 1. Work on a trace line for the client growth alone 
-	# 2. Build some sort of dot over launch date
-	# 3. Fix the maths [average_stock_growths], change 
-	# 
-
-
 	reference_line2 = go.Scatter(x=dates,
                             y=client_growth,
                             # showlegend=False
@@ -303,6 +378,9 @@ def make_graph(dates, avg_growth, client_growth):
 	fig.add_trace(reference_line2)
 
 	return newGraph
+
+
+
 
 
 # Add a trace line over graph, different color 

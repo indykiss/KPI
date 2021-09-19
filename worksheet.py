@@ -31,27 +31,26 @@ yfinance API --> input a ticker & date, gets stock price at open on date
 # I am working on these 4 functions here: 
 # Trying to copy the logics in the left panel to this, 
 # but switching "for x in companies" to date specific data
-def main(companies, start_date, end_date, launch_date, client):
+def update_output(companies, start_date, end_date, launch_date, client):
     all_companies = companies.append(client)
 
     if start_date is not None:
         dates_data = pd.date_range(start_date, end_date, periods=6)
 
-    pre_launch_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch)
-    
-    post_launch_avgs = calculate_avg_growth_over_time(companies, launch, end_date)
+    # Both lines will have all companies' avg growth over time
+    pre_launch_all_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch)
+    # After launch date, the subindustry growth rate is different 
+    post_launch_subind_avgs = calculate_avg_growth_over_time(companies, launch, end_date)
     # we're adding client growth as a trace line over custom index
-    client_post_launch_snippet = calculate_avg_growth([client], launch, end_date)
+    client_post_launch_snippet = calculate_avg_growth_over_time([client], launch, end_date)
 
-    client_growth = [*pre_launch_avgs, *client_post_launch_snippet]
+    client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
 
-    all_growths = [*pre_launch_avgs, *post_launch_avgs]
+    all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
 
     return make_graph(dates_data, all_growths, client_growth)
 
-
-# we can change the start/ end date to be start_date to launch
-# then launch to end_date
+# we can change the start/ end date to be start_date to launch then launch to end_date
 def calculate_avg_growth_over_time(companies, start_date, end_date): 
     # Will need some sort of helper function most likely 
     all_growths = []
@@ -77,7 +76,6 @@ def calculate_avg_growth_over_time(companies, start_date, end_date):
     if start_date is not None:
         return avg_math(all_growths)
 
-
 # Would return an arr of stock price growth averages
 def avg_math(all_growths):
 	all_average_growths = []
@@ -96,7 +94,6 @@ def avg_math(all_growths):
 		rounded = round(avg, 3)
 		all_average_growths.append(rounded)    
 
-
 def make_graph(dates, all_growths, client_growth):
 	fig = go.Figure(
 		data=[go.Scatter(x=dates, y=all_growths)],
@@ -114,6 +111,9 @@ def make_graph(dates, all_growths, client_growth):
 	fig.add_trace(reference_line2)
 
 	return newGraph    
+
+
+
 
 # def growth_math(stock_data, prev_day):
 # 	stock_change = []				
