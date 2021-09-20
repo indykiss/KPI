@@ -212,6 +212,8 @@ def update_client_picker(ticker):
 	Input('input-client-picker', 'value'),
 	Input('input-date-picker', 'date')])
 
+# Need to do expected input/ output audit for these functions
+
 def update_output(companies, start_date, end_date, launch_date, client):
     all_companies = companies.append(client)
 
@@ -274,6 +276,9 @@ def avg_math(all_growths):
 		avg = sum / len(all_growths)
 		rounded = round(avg, 3)
 		all_average_growths.append(rounded)    
+	print(all_average_growths)
+
+	return all_average_growths
 
 def make_graph(dates, all_growths, client_growth):
 	fig = go.Figure(
