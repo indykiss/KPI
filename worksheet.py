@@ -80,17 +80,17 @@ def calculate_avg_growth_over_time(companies, start_date, end_date):
 def avg_math(all_growths):
 	all_average_growths = []
 
-	num_days = len(growths_in_arrs[0])
+	num_days = len(all_growths[0])
 	i = 0
 
 	#  list index out of range error here sometimes
 	while i < num_days:
 		sum = 0
-		for arr in growths_in_arrs:
+		for arr in all_growths:
 			sum += arr[i]
 		i += 1
 
-		avg = sum / len(growths_in_arrs)
+		avg = sum / len(all_growths)
 		rounded = round(avg, 3)
 		all_average_growths.append(rounded)    
 
