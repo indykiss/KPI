@@ -178,7 +178,7 @@ def update_yf_client_ticker(ticker):
 
 # Select client we're targeting
 @app.callback(
-    Output('output-client-picker', 'children'),
+    Output('output-client-picker', 'value'), # maybe children instead? was children originally
     Input('input-client-picker', 'value'))
  
 # Takes the client_name input and outputs info about  stock
@@ -210,7 +210,7 @@ def update_client_picker(ticker):
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date'),
 	Input('input-date-picker', 'date'),
-	Input('output-client-picker', 'value')])
+	Input('output-client-picker', 'value')]) # Looks like a problem with this
 
 # Need to do expected input/ output audit for these functions
 
