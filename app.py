@@ -209,19 +209,21 @@ def update_client_picker(ticker):
     [Input('input-subindustry-picker', 'value'), 
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date'),
-	Input('input-client-picker', 'value'),
-	Input('input-date-picker', 'date')])
+	Input('input-date-picker', 'date'),
+	Input('output-client-picker', 'value')])
 
 # Need to do expected input/ output audit for these functions
 
 def update_output(companies, start_date, end_date, launch_date, client):
     all_companies = companies.append(client)
-
+    print(client)
+	
     if start_date is not None:
         dates_data = pd.date_range(start_date, end_date, periods=6)
 
     # Both lines will have all companies' avg growth over time
-    pre_launch_all_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch_date)
+    pre_launch_all_avgs = calculate_avg_growth_over_time(companies, start_date, launch_date)
+
     # After launch date, the subindustry growth rate is different 
     post_launch_subind_avgs = calculate_avg_growth_over_time(companies, launch_date, end_date)
     # we're adding client growth as a trace line over custom index
@@ -238,6 +240,8 @@ def calculate_avg_growth_over_time(companies, start_date, end_date):
     # Will need some sort of helper function most likely 
     all_growths = []
     
+#    print(companies)
+
     for x in companies: 
         if start_date is not None:
             df = pdr.get_data_yahoo(x, start_date, end_date)
@@ -467,7 +471,7 @@ def make_graph(dates, all_growths, client_growth):
 
 
 
-# unused at the moment 
+# unused at the moment: stock ticker lookup 
 def verify_ticker(ticker):
     tick = re.findall('^[A-Za-z]{1,4}$', ticker) 
     # python regex to find matches and return strings 
