@@ -20,6 +20,7 @@ from helpers import make_table, make_card, ticker_inputs, make_item
 # Basically index.py
 
 # Out of box specifications by Dash 
+# Update to have McK branding at some point 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -159,6 +160,7 @@ def update_output(start_date, end_date):
 
 
 # Select client BUT using yfinance to look up tickers, not hardcoded 
+# TBD, not in use yet
 @app.callback(
     Output('output-yf-client-ticker', 'children'),
     Input('input-yf-client-ticker', 'value'))
@@ -211,6 +213,7 @@ def update_client_picker(ticker):
 	Input('input-date-range-picker', 'end_date'),
 	Input('input-date-picker', 'date'),
 	Input('output-client-picker', 'value')]) # Looks like a problem with this
+	# NEED TO FIX CLIENT DATA. LOOK AT PRINT(CLIENT), ITS ODD
 
 # Need to do expected input/ output audit for these functions
 
@@ -222,7 +225,7 @@ def update_output(companies, start_date, end_date, launch_date, client):
         dates_data = pd.date_range(start_date, end_date, periods=6)
 
     # Both lines will have all companies' avg growth over time
-    pre_launch_all_avgs = calculate_avg_growth_over_time(companies, start_date, launch_date)
+    pre_launch_all_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch_date)
 
     # After launch date, the subindustry growth rate is different 
     post_launch_subind_avgs = calculate_avg_growth_over_time(companies, launch_date, end_date)
@@ -283,6 +286,7 @@ def avg_math(all_growths):
 	print(all_average_growths)
 
 	return all_average_growths
+
 
 def make_graph(dates, all_growths, client_growth):
 	fig = go.Figure(
