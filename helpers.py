@@ -18,6 +18,11 @@ import sqlite3
 
 # All my helper functions
 
+
+
+
+
+
 def ticker_inputs(inputID, pickerID, MONTH_CUTTOFF):
     #calculate the current date
     currentDate = date.today()
@@ -54,6 +59,9 @@ def make_item(button, cardbody, i):
         dbc.Collapse(
             dbc.CardBody(cardbody),
             id=f"collapse-{i}")])
+
+
+
 
 
 

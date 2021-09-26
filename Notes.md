@@ -77,17 +77,3 @@ Main issue is building a stock ticker LOOKUP instead of a hard coded thing.
 Again, less relevant. But saving point #2 in case we want to simplift due to 
 time constraints later. 
 
-
-
-
-
-
-{'props': 
-    {'children': 
-        {'props': 
-            {'children': [
-                    {'props': 
-                        {'children': 'Client selected:', 'color': 'secondary'}, 'type': 'Alert', 'namespace': 'dash_bootstrap_components'}, {'props': {'children': 'Costco Wholesale Corporation'}, 'type': 'CardBody', 'namespace': 'dash_bootstrap_components'}
-            ], 'style': None}, 'type': 'Card', 'namespace': 'dash_bootstrap_components'}
-    }, 'type': 'Col', 'namespace': 'dash_bootstrap_components'
-}

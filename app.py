@@ -31,29 +31,31 @@ server = app.server
 # Layout of components 
 app.layout = html.Div([
 
-    # Inputs - UI
-    html.H2('KPI Builder'),    
-    html.H4('Please input target ticker, industry dropdown, and launch date.'),
+	# Inputs - UI
+	html.H2('KPI Builder'),    
+	html.H4('Please input target ticker, industry dropdown, and launch date.'),
 
-    html.Div("Select the project launch date"),
-    dcc.DatePickerSingle(
-        id='input-date-picker',
-        min_date_allowed=date(2010, 1, 1),
-        max_date_allowed=date.today(),
-        initial_visible_month=date.today(),
-        date=date(2021, 8, 1)
-    ),
+	html.Div("Select the project launch date"),
+	dcc.DatePickerSingle(
+		id='input-date-picker',
+		min_date_allowed=date(2010, 1, 1),
+		max_date_allowed=date.today(),
+		initial_visible_month=date.today(),
+		date=date(2021, 9, 15)
+	),
 
 	# Works well enough. 2 years working ok
 	html.Div("Select the time range. Please select a starting date before launch and an end date after launch. We recommend 1 year BEFORE launch and 1 year AFTER launch. Please note that selecting competitors that were not public during this entire range will result in skewed data."),
-    dcc.DatePickerRange(
-        id='input-date-range-picker',
-        min_date_allowed=date(2000, 1, 1),
-        max_date_allowed=date.today(), # in deployment, would need to make this callback to be dynamic: https://stackoverflow.com/questions/62608204/dash-datepicker-max-date-allowed-as-current-date-not-working-properly
-        initial_visible_month=date(2021, 9, 1),
-		clearable=True
+	dcc.DatePickerRange(
+		id='input-date-range-picker',
+		min_date_allowed=date(2000, 1, 1),
+		max_date_allowed=date.today(), # in deployment, would need to make this callback to be dynamic: https://stackoverflow.com/questions/62608204/dash-datepicker-max-date-allowed-as-current-date-not-working-properly
+		initial_visible_month=date(2021, 9, 1),
+		clearable=True, 
+		start_date=date(2021,9,1),
+		end_date=date(2021,9,24)
 		#calendar_orientation="vertical",
-    ),
+	),
 
 	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs    
 	# Pausing on this because a little tougher to implement search
@@ -66,35 +68,33 @@ app.layout = html.Div([
 			# multi = True
 	),	
 
-    html.Div("Select the client"),
-    dcc.Dropdown(
-        id='input-client-picker',
-        options=[
-            {'label': 'Apple', 'value': 'AAPL'},
-            {'label': 'Google', 'value': 'GOOGL'},
-            {'label': 'Facebook', 'value': 'FB'},
+	html.Div("Select the client"),
+	dcc.Dropdown(
+		id='input-client-picker',
+		options=[
+			{'label': 'Apple', 'value': 'AAPL'},
+			{'label': 'Google', 'value': 'GOOGL'},
+			{'label': 'Facebook', 'value': 'FB'},
 			{'label': 'Costco', 'value': 'COST'},
-			{'label': 'IDK', 'value': 'AD'},
 			{'label': 'Shoprite', 'value': 'SRGHY'},
 			{'label': 'Spartan Nash', 'value': 'SPTN'},
 			{'label': 'Kroger', 'value': 'KR'},
 			{'label': 'Walgreens', 'value': 'WBA'},
 			{'label': 'Walmart', 'value': 'WMT'},
 			{'label': 'Wegmans', 'value': 'WEGMANS'}			
-        ],
-        value='AAPL'        
-    ),
+		],
+		value='WMT'        
+	),
 
 	# NEED TO SWAP THIS OUT WITH DYNAMIC SEARCH OF ALL S&P COMPANIES
 	html.Div("Select the subindustry competitors"),
 	dcc.Dropdown(
 		id='input-subindustry-picker',
 		options=[
-            {'label': 'Apple', 'value': 'AAPL'},
-            {'label': 'Google', 'value': 'GOOGL'},
-            {'label': 'Facebook', 'value': 'FB'},
+			{'label': 'Apple', 'value': 'AAPL'},
+			{'label': 'Google', 'value': 'GOOGL'},
+			{'label': 'Facebook', 'value': 'FB'},
 			{'label': 'Costco', 'value': 'COST'},
-			{'label': 'IDK', 'value': 'AD'},
 			{'label': 'Shoprite', 'value': 'SRGHY'},
 			{'label': 'Spartan Nash', 'value': 'SPTN'},
 			{'label': 'Kroger', 'value': 'KR'},
@@ -106,12 +106,12 @@ app.layout = html.Div([
 		multi=True
 	), 
 
-    # Next step: Just add a graph or any info that displays 
-    # the client's ticker info
+	# Next step: Just add a graph or any info that displays 
+	# the client's ticker info
 
-    # Outputs - UI
-    html.Div(id='output-date-picker'),
-    html.Div(id='output-client-picker'),
+	# Outputs - UI
+	html.Div(id='output-date-picker'),
+	html.Div(id='output-client-picker'),
 	html.Div(id='output-date-range-picker'),
 	html.Div(id='output-subindustry-picker'), 
 	html.Div(id='output-yf-client-ticker')	
@@ -124,76 +124,76 @@ app.layout = html.Div([
 
 # Select date of launch
 @app.callback(
-    Output('output-date-picker', 'children'),
-    Input('input-date-picker', 'date'))
+	Output('output-date-picker', 'children'),
+	Input('input-date-picker', 'date'))
 
 def update_output(date_value):
-    string_prefix = 'Date selected: '
-    if date_value is not None:
-        date_object = date.fromisoformat(date_value)
-        date_string = date_object.strftime('%B %d, %Y')
-        return string_prefix + date_string
-    
+	string_prefix = 'Date selected: '
+	if date_value is not None:
+		date_object = date.fromisoformat(date_value)
+		date_string = date_object.strftime('%B %d, %Y')
+		return string_prefix + date_string
+	
 
 
 
 # Select the time frame 
 @app.callback(
-    Output('output-date-range-picker', 'children'),
-    [Input('input-date-range-picker', 'start_date'),
-    Input('input-date-range-picker', 'end_date')])
+	Output('output-date-range-picker', 'children'),
+	[Input('input-date-range-picker', 'start_date'),
+	Input('input-date-range-picker', 'end_date')])
 
 def update_output(start_date, end_date):
-    string_prefix = 'You have selected: '
-    if start_date is not None:
-        start_date_object = date.fromisoformat(start_date)
-        start_date_string = start_date_object.strftime('%B %d, %Y')
-        string_prefix = string_prefix + 'Start Date: ' + start_date_string + ' | '
-    if end_date is not None:
-        end_date_object = date.fromisoformat(end_date)
-        end_date_string = end_date_object.strftime('%B %d, %Y')
-        string_prefix = string_prefix + 'End Date: ' + end_date_string
-    if len(string_prefix) == len('You have selected: '):
-        return 'Select a date to see it displayed here'
-    else:
-        return string_prefix
+	string_prefix = 'You have selected: '
+	if start_date is not None:
+		start_date_object = date.fromisoformat(start_date)
+		start_date_string = start_date_object.strftime('%B %d, %Y')
+		string_prefix = string_prefix + 'Start Date: ' + start_date_string + ' | '
+	if end_date is not None:
+		end_date_object = date.fromisoformat(end_date)
+		end_date_string = end_date_object.strftime('%B %d, %Y')
+		string_prefix = string_prefix + 'End Date: ' + end_date_string
+	if len(string_prefix) == len('You have selected: '):
+		return 'Select a date to see it displayed here'
+	else:
+		return string_prefix
 
 
 # Select client BUT using yfinance to look up tickers, not hardcoded 
 # TBD, not in use yet
 @app.callback(
-    Output('output-yf-client-ticker', 'children'),
-    Input('input-yf-client-ticker', 'value'))
+	Output('output-yf-client-ticker', 'children'),
+	Input('input-yf-client-ticker', 'value'))
 
 # TBD
 def update_yf_client_ticker(ticker):
-    string_answer = 'You have selected: '
+	string_answer = 'You have selected: '
 
 	# if input is accurate ticker
-    if ticker is not None: # switch for is a ticker
-        string_answer = string_answer + ticker
-    else:
-        string_answer = 'This is not a valid ticker. Try again.'
+	if ticker is not None: # switch for is a ticker
+		string_answer = string_answer + ticker
+	else:
+		string_answer = 'This is not a valid ticker. Try again.'
 
-    return string_answer
+	return string_answer
 
 
 # Select client we're targeting
 @app.callback(
-    Output('output-client-picker', 'children'), # must be children?
-    Input('input-client-picker', 'value'))
+	Output('output-client-picker', 'children'), # must be children?
+	Input('input-client-picker', 'value'))
  
 # Takes the client_name input and outputs info about  stock
 # Connect the yfinance API here 
 def update_client_picker(ticker):
-    ticker = ticker.upper()
-    TICKER = yf.Ticker(ticker)
-        
-    cards = [ 
-	dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName'])),
-    dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
-    ] #end cards list
-    return cards
+	ticker = ticker.upper()
+	TICKER = yf.Ticker(ticker)
+		
+	cards = [ 
+	dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName']))
+	# dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
+	] #end cards list
+	return cards
 
 
 # Select the custom index competitors
@@ -205,85 +205,86 @@ def update_client_picker(ticker):
 # Confirmed that all math works in gsheet with manual data from yahoo finance: 
 # https://docs.google.com/spreadsheets/d/1yQ6AgjBPN3EHST2TDfmaRXgS0VVP54qXQwhmxpw18Fs/edit#gid=0 
 @app.callback(
-    Output('output-subindustry-picker', 'children'),
-    [Input('input-subindustry-picker', 'value'), 
+	Output('output-subindustry-picker', 'children'),
+	[Input('input-subindustry-picker', 'value'), 
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date'),
 	Input('input-date-picker', 'date'),
-	Input('input-client-picker', 'value')]) 
-
-#if companies is None or start_date is None or end_date is None or launch_date is None or client is None:
-#	raise PreventUpdate
-	
-
+	Input('input-client-picker', 'value')])
 # Need to do expected input/ output audit for these functions
 def update_output(companies, start_date, end_date, launch_date, client):
-    if companies is None or start_date is None or end_date is None or launch_date is None or client is None:
-        raise PreventUpdate
+	if companies is None or start_date is None or end_date is None or launch_date is None or client is None:
+		raise PreventUpdate
 	
-    all_companies = [*companies]
-    all_companies.append(client)
+	all_companies = [*companies]
+	all_companies.append(client)
 
-    if start_date is not None:
-        dates_data = pd.date_range(start_date, end_date, periods=6)
+	if start_date is not None:
+		dates_data = pd.date_range(start_date, end_date, periods=6)
+		# dates_data is not working 
 
-    # Both lines will have all companies' avg growth over time
-    pre_launch_all_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch_date)
-    # print(pre_launch_all_avgs)
-    # print("pre_launch_all_avgs")   
-	
+	# Both lines will have all companies' avg growth over time
+	pre_launch_all_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch_date)
+
 	# After launch date, the subindustry growth rate is different 
-    post_launch_subind_avgs = calculate_avg_growth_over_time(companies, launch_date, end_date)
-    # print(post_launch_subind_avgs)
-    # print("post_launch_subind_avgs")
+	post_launch_subind_avgs = calculate_avg_growth_over_time(companies, launch_date, end_date)
+	print(post_launch_subind_avgs)
 
-    # we're adding client growth as a trace line over custom index
-    client_post_launch_snippet = calculate_avg_growth_over_time([client], launch_date, end_date)
-    # print(client_post_launch_snippet)
-    # print("client_post_launch_snippet")
+	# we're adding client growth as a trace line over custom index
+	client_post_launch_snippet = calculate_avg_growth_over_time([client], launch_date, end_date)
 
-    client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
-    print("client_growth:")
-    print(client_growth)
+	client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
+	# print("client_growth:")
+	# print(client_growth)
 
-    all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
+	all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
 
-    print("all_growths:")
-    print(all_growths)
+	# print("all_growths:")
+	# print(all_growths)
 
-    return make_graph(dates_data, all_growths, client_growth)
+	# print("dates_data")
+	print(dates_data)
+
+	return make_graph(dates_data, all_growths, client_growth)
 
 # we can change the start/ end date to be start_date to launch then launch to end_date
 def calculate_avg_growth_over_time(companies, start_date, end_date): 
-    # Will need some sort of helper function most likely 
-    all_growths = []
-    
-    for x in companies: 
-        if start_date is not None:
-            df = pdr.get_data_yahoo(x, start_date, end_date)
-            stock_data = df['Open']
-            prev_day = 0
-            stock_percent_change = []   
-              
-            for day_price in stock_data:
-                    if prev_day == 0:
-                        prev_day = day_price
-                    else:
-                        percent_change = ((day_price - prev_day) / day_price) * 100 
-                        rounded = round(percent_change, 3)
-                        stock_percent_change.append(rounded)
+	# Will need some sort of helper function most likely 
+	all_growths = []
+	d1 = datetime.strptime(start_date, "%Y-%m-%d")
+	d2 = datetime.strptime(end_date, "%Y-%m-%d")
 
-                        prev_day = day_price
-                        all_growths.append(stock_percent_change)
-            
-    if start_date is not None:
-        return avg_math(all_growths)
+	num_days = abs((d2-d1).days)
+	
+	for x in companies: 
+		if start_date is not None:
+			try:
+				df = pdr.get_data_yahoo(x, start_date, end_date)
+			except:
+				print("An exception error")
+			stock_data = df['Open']
+			prev_day = 0
+			stock_percent_change = []   
+			  
+			for day_price in stock_data:
+					if prev_day == 0:
+						prev_day = day_price
+					else:
+						percent_change = ((day_price - prev_day) / day_price) * 100 
+						rounded = round(percent_change, 3)
+						stock_percent_change.append(rounded)
+
+						prev_day = day_price
+						all_growths.append(stock_percent_change)
+			
+	if start_date is not None:
+		#print(all_growths)
+		return avg_math(all_growths, num_days)
 
 # Would return an arr of stock price growth averages
-def avg_math(all_growths):
+def avg_math(all_growths, num_days):
 	all_average_growths = []
 
-	num_days = len(all_growths[0])
 	i = 0
 
 	#  list index out of range error here sometimes
@@ -302,18 +303,20 @@ def avg_math(all_growths):
 
 
 def make_graph(dates, all_growths, client_growth):
+	print("hello")
+
 	fig = go.Figure(
 		data=[go.Scatter(x=dates, y=all_growths)],
 		layout=go.Layout(
-        	title=go.layout.Title(text="Custom index growth over time"))
+			title=go.layout.Title(text="Custom index growth over time"))
 	)
 	newGraph = html.Div(dcc.Graph(
 		id='output-subindustry-picker',
 		figure=fig
 	))
 	reference_line2 = go.Scatter(x=dates,
-                            y=client_growth,
-                            # showlegend=False
+							y=client_growth,
+							# showlegend=False
 							)
 	fig.add_trace(reference_line2)
 
@@ -337,7 +340,6 @@ def make_graph(dates, all_growths, client_growth):
 # 		dates_data = pd.date_range(start_date, end_date, periods=6)
 # 	#  end_date_object = date.fromisoformat(end_date)
 
-# 	# Probably too slow, causing lag?
 # 	for x in companies: 
 # 		if start_date is not None:			
 # 			# start_date_object = date.fromisoformat(start_date)
@@ -390,7 +392,7 @@ def make_graph(dates, all_growths, client_growth):
 	fig = go.Figure(
 		data=[go.Scatter(x=dates, y=avg_growth)],
 		layout=go.Layout(
-        	title=go.layout.Title(text="Custom index growth over time"))
+			title=go.layout.Title(text="Custom index growth over time"))
 	)
 
 	newGraph = html.Div(dcc.Graph(
@@ -398,8 +400,8 @@ def make_graph(dates, all_growths, client_growth):
 		figure=fig
 	))
 	reference_line2 = go.Scatter(x=dates,
-                            y=client_growth,
-                            # showlegend=False
+							y=client_growth,
+							# showlegend=False
 							)
 	fig.add_trace(reference_line2)
 
@@ -490,12 +492,12 @@ def make_graph(dates, all_growths, client_growth):
 
 # unused at the moment: stock ticker lookup 
 def verify_ticker(ticker):
-    tick = re.findall('^[A-Za-z]{1,4}$', ticker) 
-    # python regex to find matches and return strings 
-    if len(tick)>0:
-        return True, tick[0].upper()
-    else: 
-        return False
+	tick = re.findall('^[A-Za-z]{1,4}$', ticker) 
+	# python regex to find matches and return strings 
+	if len(tick)>0:
+		return True, tick[0].upper()
+	else: 
+		return False
 
 # ticker = "AAPL"
 
@@ -503,25 +505,25 @@ def get_ticker(n_clicks, time, ticker, mkt):
 	# For default setting
 	if ticker == '':
 		return 'Please Enter a Stock Ticker', \
-		       '','','',{'width':'20%', 'display':'inline-block'},'', \
-		       {'width':'20%', 'display':'inline-block'},'', \
-		       {'data':None}, None
+			   '','','',{'width':'20%', 'display':'inline-block'},'', \
+			   {'width':'20%', 'display':'inline-block'},'', \
+			   {'data':None}, None
 	# Verify ticker format in respective to stock market
 	stockFormat, ticker = verify_ticker(ticker, mkt)
 	# Catch incorrect 
 	if stockFormat is False:
 		return 'Wrong Ticker', '#######', '$##.##', '##.##', \
-		       {'width':'20%', 'display':'inline-block'}, '##.##%', \
-		       {'width':'20%', 'display':'inline-block'}, \
-		       'Error! Please try again.', {'data':None}, None
+			   {'width':'20%', 'display':'inline-block'}, '##.##%', \
+			   {'width':'20%', 'display':'inline-block'}, \
+			   'Error! Please try again.', {'data':None}, None
 	# Obtain stock price and stats
 	stock = yfinance.Ticker(ticker)
 	# Catch if stock exists
 	if stock.history(period='ytd').shape[0] == 0:
 		return 'Wrong Ticker', '#######', '$##.##', '##.##', \
-		       {'width':'20%', 'display':'inline-block'}, '##.##%', \
-		       {'width':'20%', 'display':'inline-block'}, \
-		       'Error! Please try again.', {'data':None}, None
+			   {'width':'20%', 'display':'inline-block'}, '##.##%', \
+			   {'width':'20%', 'display':'inline-block'}, \
+			   'Error! Please try again.', {'data':None}, None
 	### Stock Stats for Info Box ###
 	try: 
 		# Name and price
@@ -542,21 +544,21 @@ def get_ticker(n_clicks, time, ticker, mkt):
 		price_percent_change = f'{price_percent_change*100:,.2f}%'
 
 		df = getMA(stock, time, 
-			       stock.history(period=time).reset_index()['Date'])
+				   stock.history(period=time).reset_index()['Date'])
 
 		fig = getCandlestick(df)
 		table = getTab1Table(stock.history(period=time).reset_index(),
-			                 stock.info)
+							 stock.info)
 
 	except:
 		return 'Sorry! Company Not Available', '#######', '$##.##', '##.##', \
-		       {'width':'20%', 'display':'inline-block'}, '##.##%', \
-		       {'width':'20%', 'display':'inline-block'}, \
-		       'Error! Please try again another Company.', {'data':None}, None
+			   {'width':'20%', 'display':'inline-block'}, '##.##%', \
+			   {'width':'20%', 'display':'inline-block'}, \
+			   'Error! Please try again another Company.', {'data':None}, None
 
 
 	return stock_name, ticker, price, price_change, price_change_colour, \
-	       price_percent_change, price_change_colour, '', fig, table
+		   price_percent_change, price_change_colour, '', fig, table
 
 
 
@@ -564,27 +566,27 @@ def get_tab1_info_box():
 	return html.Div([
 				html.Div([
 					html.Div(id='tab1-stock-price',
-						     style={'width':'30%','display':'inline-block',
-						            'font-size':'200%'}),
+							 style={'width':'30%','display':'inline-block',
+									'font-size':'200%'}),
 					html.Div(id='tab1-stock-price-change'),
 					html.Div(id='tab1-stock-price-percentchange')
 					],style={'width':'30%','display': 'inline-block',
-			                 'vertical-align':'top'}),
+							 'vertical-align':'top'}),
 				html.Div(style={'width':'15%','display': 'inline-block'}),
 				html.Div(dcc.Dropdown(id='tab1-market-dropdown',
-					                  options=tab1_markets,
-					                  value=tab1_markets[0]['value'],
-				                      style={'text-align':'left'}),
-					     style={'width':'20%','display': 'inline-block',
-			            		'vertical-align':'top'}),
+									  options=tab1_markets,
+									  value=tab1_markets[0]['value'],
+									  style={'text-align':'left'}),
+						 style={'width':'20%','display': 'inline-block',
+								'vertical-align':'top'}),
 				html.Div(style={'width':'5%','display': 'inline-block'}),
 				html.Div([
 					html.Div([
 						html.Div(dcc.Input(id='tab1-ticker-input',value='',
-						                   type='text'),
-						                   style={'display': 'inline-block'}),
+										   type='text'),
+										   style={'display': 'inline-block'}),
 						html.Div(html.Button('Submit',id='tab1-submit'),
-							     style={'display': 'inline-block'})
+								 style={'display': 'inline-block'})
 						]),
 					html.Div(id='tab1-error-message', style={'color':'red'}, children='Error Box')
 					],style={'width':'30%','display': 'inline-block'})
@@ -599,4 +601,4 @@ def get_tab1_info_box():
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+	app.run_server(debug=True)
