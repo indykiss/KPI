@@ -80,3 +80,14 @@ time constraints later.
 
 
 
+
+
+{'props': 
+    {'children': 
+        {'props': 
+            {'children': [
+                    {'props': 
+                        {'children': 'Client selected:', 'color': 'secondary'}, 'type': 'Alert', 'namespace': 'dash_bootstrap_components'}, {'props': {'children': 'Costco Wholesale Corporation'}, 'type': 'CardBody', 'namespace': 'dash_bootstrap_components'}
+            ], 'style': None}, 'type': 'Card', 'namespace': 'dash_bootstrap_components'}
+    }, 'type': 'Col', 'namespace': 'dash_bootstrap_components'
+}

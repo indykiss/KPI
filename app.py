@@ -118,9 +118,8 @@ app.layout = html.Div([
 
 
 
-# Back end stuffs 
+# Callbacks are functions that are automatically called by Dash whenever an input component's property changes.
 # Each input/ output uses it's own callback   
-# Callbacks
 
 # Select date of launch
 @app.callback(
@@ -165,7 +164,7 @@ def update_output(start_date, end_date):
     Output('output-yf-client-ticker', 'children'),
     Input('input-yf-client-ticker', 'value'))
 
-# I'm working on this now
+# TBD
 def update_yf_client_ticker(ticker):
     string_answer = 'You have selected: '
 
@@ -180,7 +179,7 @@ def update_yf_client_ticker(ticker):
 
 # Select client we're targeting
 @app.callback(
-    Output('output-client-picker', 'value'), # maybe children instead? was children originally
+    Output('output-client-picker', 'children'), # must be children?
     Input('input-client-picker', 'value'))
  
 # Takes the client_name input and outputs info about  stock
@@ -194,8 +193,6 @@ def update_client_picker(ticker):
     dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
     ] #end cards list
     return cards
-
-
 
 
 # Select the custom index competitors
@@ -212,15 +209,14 @@ def update_client_picker(ticker):
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date'),
 	Input('input-date-picker', 'date'),
-	Input('output-client-picker', 'value')]) # Looks like a problem with this
-	# NEED TO FIX CLIENT DATA. LOOK AT PRINT(CLIENT), ITS ODD
+	Input('input-client-picker', 'value')]) 
 
 # Need to do expected input/ output audit for these functions
-
 def update_output(companies, start_date, end_date, launch_date, client):
-    all_companies = companies.append(client)
-    print(client)
-	
+    all_companies = [*companies]
+    all_companies.append(client)
+    print(all_companies)
+
     if start_date is not None:
         dates_data = pd.date_range(start_date, end_date, periods=6)
 
@@ -243,8 +239,6 @@ def calculate_avg_growth_over_time(companies, start_date, end_date):
     # Will need some sort of helper function most likely 
     all_growths = []
     
-#    print(companies)
-
     for x in companies: 
         if start_date is not None:
             df = pdr.get_data_yahoo(x, start_date, end_date)
@@ -283,7 +277,7 @@ def avg_math(all_growths):
 		avg = sum / len(all_growths)
 		rounded = round(avg, 3)
 		all_average_growths.append(rounded)    
-	print(all_average_growths)
+	#print(all_average_growths)
 
 	return all_average_growths
 
