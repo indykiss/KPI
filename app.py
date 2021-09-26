@@ -13,6 +13,7 @@ import pandas as pd
 import pandas_datareader as pdr
 import re
 import yfinance as yf
+from dash.exceptions import PreventUpdate
 from datetime import date, datetime, timedelta
 from helpers import make_table, make_card, ticker_inputs, make_item
 
@@ -211,26 +212,44 @@ def update_client_picker(ticker):
 	Input('input-date-picker', 'date'),
 	Input('input-client-picker', 'value')]) 
 
+#if companies is None or start_date is None or end_date is None or launch_date is None or client is None:
+#	raise PreventUpdate
+	
+
 # Need to do expected input/ output audit for these functions
 def update_output(companies, start_date, end_date, launch_date, client):
+    if companies is None or start_date is None or end_date is None or launch_date is None or client is None:
+        raise PreventUpdate
+	
     all_companies = [*companies]
     all_companies.append(client)
-    print(all_companies)
 
     if start_date is not None:
         dates_data = pd.date_range(start_date, end_date, periods=6)
 
     # Both lines will have all companies' avg growth over time
     pre_launch_all_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch_date)
-
-    # After launch date, the subindustry growth rate is different 
+    # print(pre_launch_all_avgs)
+    # print("pre_launch_all_avgs")   
+	
+	# After launch date, the subindustry growth rate is different 
     post_launch_subind_avgs = calculate_avg_growth_over_time(companies, launch_date, end_date)
+    # print(post_launch_subind_avgs)
+    # print("post_launch_subind_avgs")
+
     # we're adding client growth as a trace line over custom index
     client_post_launch_snippet = calculate_avg_growth_over_time([client], launch_date, end_date)
+    # print(client_post_launch_snippet)
+    # print("client_post_launch_snippet")
 
     client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
+    print("client_growth:")
+    print(client_growth)
 
     all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
+
+    print("all_growths:")
+    print(all_growths)
 
     return make_graph(dates_data, all_growths, client_growth)
 
