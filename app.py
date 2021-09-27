@@ -1,6 +1,5 @@
 
 # Import dash
-import os
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -11,21 +10,21 @@ from dash.exceptions import PreventUpdate
 # Import plotly 
 import plotly 
 import plotly.graph_objects as go
+import plotly.express as px
 from plotly.subplots import make_subplots
-import plotly.graph_objs as go
 
 # Import pandas
 import pandas as pd 
 
-# Import misc
+# Import misc - maybe delete some
 import re
+import os
 from datetime import date, datetime, timedelta
-from helpers import make_table, make_card, ticker_inputs, make_item
 
 # Import functions from my code 
 import model.calculations as calc
 import dal.finance as fin
-
+from helpers import make_table, make_card, ticker_inputs, make_item  #maybe delete
 
 
 
@@ -229,7 +228,7 @@ def update_client_picker(ticker):
 	Input('input-date-picker', 'date'),
 	Input('input-client-picker', 'value')])
 
-# Need to do expected input/ output audit for these functions
+# Need to do expected input/ output audit for these functions for tests
 def update_output(companies, start_date, end_date, launch_date, client):
 	if companies is None or start_date is None or end_date is None or launch_date is None or client is None:
 		raise PreventUpdate
@@ -239,7 +238,7 @@ def update_output(companies, start_date, end_date, launch_date, client):
 
 	if start_date is not None:
 		dates_data = pd.date_range(start_date, end_date, periods=6)
-		# dates_data is not working 
+		# DATES_DATA IS NOT WORKING?? OR IS IT??
 
 	# Both lines will have all companies' avg growth over time
 	pre_launch_all_avgs = calc.calculate_avg_growth_over_time(all_companies, start_date, launch_date)
@@ -251,39 +250,57 @@ def update_output(companies, start_date, end_date, launch_date, client):
 	client_post_launch_snippet = calc.calculate_avg_growth_over_time([client], launch_date, end_date)
 
 	client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
-	print("client_growth:")
-	print(client_growth)
 
 	all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
-
-	# print("all_growths:")
-	# print(all_growths)
-
-	# print("dates_data")
-	# print(dates_data)
 
 	return make_graph(dates_data, all_growths, client_growth)
 
 
+# Second trace line not visible for some reason?
 def make_graph(dates, all_growths, client_growth):
-	print("hello")
+	fig = go.Figure()
 
-	fig = go.Figure(
-		data=[go.Scatter(x=dates, y=all_growths)],
-		layout=go.Layout(
-			title=go.layout.Title(text="Custom index growth over time"))
-	)
+	fig.add_trace(go.Scatter(
+		x=dates,
+		y=all_growths, 
+		mode="lines+markers",
+		name="Custom index growth"
+	))
+
+	fig.add_trace(go.Scatter(
+		x=dates,
+		y=client_growth,
+		mode="lines+markers",
+		name="Client growth"
+	))
+
 	newGraph = html.Div(dcc.Graph(
 		id='output-subindustry-picker',
 		figure=fig
-	))
-	reference_line2 = go.Scatter(x=dates,
-							y=client_growth,
-							# showlegend=False
-							)
-	fig.add_trace(reference_line2)
+	))	
 
-	return newGraph    
+	return newGraph
+
+	# fig = go.Figure(
+	# 	data=[go.Scatter(x=dates, y=all_growths)],
+	# 	layout=go.Layout(
+	# 		title=go.layout.Title(text="Custom index growth over time"))
+	# )
+
+	# fig.add_trace(go.Scatter(
+	# 						x=dates,
+	# 						y=client_growth,
+	# 						mode="lines",
+	# 						line=go.scatter.Line(color="gray")
+	# 						# showlegend=False
+	# 						))
+
+	# newGraph = html.Div(dcc.Graph(
+	# 	id='output-subindustry-picker',
+	# 	figure=fig
+	# ))
+
+	# return newGraph    
 
 
 
@@ -352,23 +369,23 @@ def make_graph(dates, all_growths, client_growth):
 # 	return make_graph(dates, all_average_growths, client_growth)
 
 # def make_graph(dates, avg_growth, client_growth):
-	fig = go.Figure(
-		data=[go.Scatter(x=dates, y=avg_growth)],
-		layout=go.Layout(
-			title=go.layout.Title(text="Custom index growth over time"))
-	)
+	# fig = go.Figure(
+	# 	data=[go.Scatter(x=dates, y=avg_growth)],
+	# 	layout=go.Layout(
+	# 		title=go.layout.Title(text="Custom index growth over time"))
+	# )
 
-	newGraph = html.Div(dcc.Graph(
-		id='output-subindustry-picker',
-		figure=fig
-	))
-	reference_line2 = go.Scatter(x=dates,
-							y=client_growth,
-							# showlegend=False
-							)
-	fig.add_trace(reference_line2)
+	# newGraph = html.Div(dcc.Graph(
+	# 	id='output-subindustry-picker',
+	# 	figure=fig
+	# ))
+	# reference_line2 = go.Scatter(x=dates,
+	# 						y=client_growth,
+	# 						# showlegend=False
+	# 						)
+	# fig.add_trace(reference_line2)
 
-	return newGraph
+	# return newGraph
 
 
 
