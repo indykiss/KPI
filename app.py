@@ -1,24 +1,33 @@
 
+# Import dash
 import os
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-import plotly.graph_objs as go
 from dash.dependencies import Input, Output # So I can simplify callback
+from dash.exceptions import PreventUpdate
+
+# Import plotly 
 import plotly 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.graph_objs as go
+
+# Import pandas
 import pandas as pd 
-import pandas_datareader as pdr
+
+# Import misc
 import re
-import yfinance as yf
-from dash.exceptions import PreventUpdate
 from datetime import date, datetime, timedelta
 from helpers import make_table, make_card, ticker_inputs, make_item
 
+# Import functions from my code 
+import model.calculations as calc
+import dal.finance as fin
 
-# Basically index.py
+
+
 
 # Out of box specifications by Dash 
 # Update to have McK branding at some point 
@@ -129,12 +138,15 @@ app.layout = html.Div([
 
 def update_output(date_value):
 	string_prefix = 'Date selected: '
+	simple_output = ""
+
 	if date_value is not None:
 		date_object = date.fromisoformat(date_value)
 		date_string = date_object.strftime('%B %d, %Y')
-		return string_prefix + date_string
-	
+		string_prefix = string_prefix + date_string
 
+	return simple_output
+	
 
 
 # Select the time frame 
@@ -145,6 +157,8 @@ def update_output(date_value):
 
 def update_output(start_date, end_date):
 	string_prefix = 'You have selected: '
+	simple_output = ""
+
 	if start_date is not None:
 		start_date_object = date.fromisoformat(start_date)
 		start_date_string = start_date_object.strftime('%B %d, %Y')
@@ -156,7 +170,7 @@ def update_output(start_date, end_date):
 	if len(string_prefix) == len('You have selected: '):
 		return 'Select a date to see it displayed here'
 	else:
-		return string_prefix
+		return simple_output
 
 
 # Select client BUT using yfinance to look up tickers, not hardcoded 
@@ -167,15 +181,16 @@ def update_output(start_date, end_date):
 
 # TBD
 def update_yf_client_ticker(ticker):
-	string_answer = 'You have selected: '
+	return ""
+	# string_answer = 'You have selected: '
 
-	# if input is accurate ticker
-	if ticker is not None: # switch for is a ticker
-		string_answer = string_answer + ticker
-	else:
-		string_answer = 'This is not a valid ticker. Try again.'
+	# # if input is accurate ticker
+	# if ticker is not None: # switch for is a ticker
+	# 	string_answer = string_answer + ticker
+	# else:
+	# 	string_answer = 'This is not a valid ticker. Try again.'
 
-	return string_answer
+	# return string_answer
 
 
 # Select client we're targeting
@@ -187,13 +202,15 @@ def update_yf_client_ticker(ticker):
 # Connect the yfinance API here 
 def update_client_picker(ticker):
 	ticker = ticker.upper()
-	TICKER = yf.Ticker(ticker)
+	TICKER = fin.get_ticker(ticker)
+	simple_output = ""
 		
 	cards = [ 
-	dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName']))
-	# dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
-	] #end cards list
-	return cards
+	dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName'])),
+	dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
+	]
+
+	return simple_output
 
 
 # Select the custom index competitors
@@ -211,11 +228,12 @@ def update_client_picker(ticker):
 	Input('input-date-range-picker', 'end_date'),
 	Input('input-date-picker', 'date'),
 	Input('input-client-picker', 'value')])
+
 # Need to do expected input/ output audit for these functions
 def update_output(companies, start_date, end_date, launch_date, client):
 	if companies is None or start_date is None or end_date is None or launch_date is None or client is None:
 		raise PreventUpdate
-	
+
 	all_companies = [*companies]
 	all_companies.append(client)
 
@@ -224,18 +242,17 @@ def update_output(companies, start_date, end_date, launch_date, client):
 		# dates_data is not working 
 
 	# Both lines will have all companies' avg growth over time
-	pre_launch_all_avgs = calculate_avg_growth_over_time(all_companies, start_date, launch_date)
+	pre_launch_all_avgs = calc.calculate_avg_growth_over_time(all_companies, start_date, launch_date)
 
 	# After launch date, the subindustry growth rate is different 
-	post_launch_subind_avgs = calculate_avg_growth_over_time(companies, launch_date, end_date)
-	print(post_launch_subind_avgs)
+	post_launch_subind_avgs = calc.calculate_avg_growth_over_time(companies, launch_date, end_date)
 
 	# we're adding client growth as a trace line over custom index
-	client_post_launch_snippet = calculate_avg_growth_over_time([client], launch_date, end_date)
+	client_post_launch_snippet = calc.calculate_avg_growth_over_time([client], launch_date, end_date)
 
 	client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
-	# print("client_growth:")
-	# print(client_growth)
+	print("client_growth:")
+	print(client_growth)
 
 	all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
 
@@ -243,63 +260,9 @@ def update_output(companies, start_date, end_date, launch_date, client):
 	# print(all_growths)
 
 	# print("dates_data")
-	print(dates_data)
+	# print(dates_data)
 
 	return make_graph(dates_data, all_growths, client_growth)
-
-# we can change the start/ end date to be start_date to launch then launch to end_date
-def calculate_avg_growth_over_time(companies, start_date, end_date): 
-	# Will need some sort of helper function most likely 
-	all_growths = []
-	d1 = datetime.strptime(start_date, "%Y-%m-%d")
-	d2 = datetime.strptime(end_date, "%Y-%m-%d")
-
-	num_days = abs((d2-d1).days)
-	
-	for x in companies: 
-		if start_date is not None:
-			try:
-				df = pdr.get_data_yahoo(x, start_date, end_date)
-			except:
-				print("An exception error")
-			stock_data = df['Open']
-			prev_day = 0
-			stock_percent_change = []   
-			  
-			for day_price in stock_data:
-					if prev_day == 0:
-						prev_day = day_price
-					else:
-						percent_change = ((day_price - prev_day) / day_price) * 100 
-						rounded = round(percent_change, 3)
-						stock_percent_change.append(rounded)
-
-						prev_day = day_price
-						all_growths.append(stock_percent_change)
-			
-	if start_date is not None:
-		#print(all_growths)
-		return avg_math(all_growths, num_days)
-
-# Would return an arr of stock price growth averages
-def avg_math(all_growths, num_days):
-	all_average_growths = []
-
-	i = 0
-
-	#  list index out of range error here sometimes
-	while i < num_days:
-		sum = 0
-		for arr in all_growths:
-			sum += arr[i]
-		i += 1
-
-		avg = sum / len(all_growths)
-		rounded = round(avg, 3)
-		all_average_growths.append(rounded)    
-	#print(all_average_growths)
-
-	return all_average_growths
 
 
 def make_graph(dates, all_growths, client_growth):
