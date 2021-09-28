@@ -49,7 +49,7 @@ app.layout = html.Div([
 		min_date_allowed=date(2010, 1, 1),
 		max_date_allowed=date.today(),
 		initial_visible_month=date.today(),
-		date=date(2021, 9, 15)
+		date=date(2018, 4, 1)
 	),
 
 	# Works well enough. 2 years working ok
@@ -60,8 +60,8 @@ app.layout = html.Div([
 		max_date_allowed=date.today(), # in deployment, would need to make this callback to be dynamic: https://stackoverflow.com/questions/62608204/dash-datepicker-max-date-allowed-as-current-date-not-working-properly
 		initial_visible_month=date(2021, 9, 1),
 		clearable=True, 
-		start_date=date(2021,9,1),
-		end_date=date(2021,9,24)
+		start_date=date(2017,4,1),
+		end_date=date(2019,4,1)
 		#calendar_orientation="vertical",
 	),
 
@@ -89,7 +89,11 @@ app.layout = html.Div([
 			{'label': 'Kroger', 'value': 'KR'},
 			{'label': 'Walgreens', 'value': 'WBA'},
 			{'label': 'Walmart', 'value': 'WMT'},
-			{'label': 'Wegmans', 'value': 'WEGMANS'}			
+			{'label': 'Wegmans', 'value': 'WEGMANS'},			
+			{'label': 'American Express', 'value': 'AXP'},
+			{'label': 'Mastercard', 'value': 'MA'},
+			{'label': 'Visa', 'value': 'V'},			
+			{'label': 'Discover', 'value': 'DFS'}			
 		],
 		value='WMT'        
 	),
@@ -108,7 +112,11 @@ app.layout = html.Div([
 			{'label': 'Kroger', 'value': 'KR'},
 			{'label': 'Walgreens', 'value': 'WBA'},
 			{'label': 'Walmart', 'value': 'WMT'},
-			{'label': 'Wegmans', 'value': 'WEGMANS'}			
+			{'label': 'Wegmans', 'value': 'WEGMANS'},
+			{'label': 'American Express', 'value': 'AXP'},
+			{'label': 'Mastercard', 'value': 'MA'},
+			{'label': 'Visa', 'value': 'V'},
+			{'label': 'Discover', 'value': 'DFS'}						
 		],
 		value=['COST', 'SRGHY', 'SPTN', 'KR', 'WBA'],
 		multi=True
@@ -242,7 +250,7 @@ def update_output(companies, start_date, end_date, launch_date, submitted, clien
 	all_companies.append(client)
 
 	if start_date is not None:
-		dates_data = pd.date_range(start_date, end_date, periods=6)
+		dates_data = pd.date_range(start_date, end_date, periods=8)
 		# DATES_DATA IS NOT WORKING?? OR IS IT??
 
 	# Both lines will have all companies' avg growth over time
@@ -261,24 +269,28 @@ def update_output(companies, start_date, end_date, launch_date, submitted, clien
 	return make_graph(dates_data, all_growths, client_growth)
 
 
+
 # FIX SECOND TRACE LINE NOT WORKING
 # Second trace line not visible for some reason?
 def make_graph(dates, all_growths, client_growth):
+
+	print("all_growths")
+	print(all_growths)
+	print("client_growth")
+	print(client_growth)
+	print("dates")
+	print(dates)
+	
 	fig = go.Figure()
+	fig.add_trace(go.Scatter(x=dates, y=client_growth,
+						mode="lines+markers",
+						name='Client growth'))
 
-	fig.add_trace(go.Scatter(
-		x=dates,
-		y=all_growths, 
-		mode="lines+markers",
-		name="Custom index growth"
-	))
+	fig.add_trace(go.Scatter(x=dates, y=all_growths,
+						mode="lines+markers",
+						name='Custom index growth'))
 
-	fig.add_trace(go.Scatter(
-		x=dates,
-		y=client_growth,
-		mode="lines+markers",
-		name="Client growth"
-	))
+	# fig.show()
 
 	newGraph = html.Div(dcc.Graph(
 		id='output-subindustry-picker',
