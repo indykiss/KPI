@@ -3,6 +3,7 @@
 # for the companies we're looking at. Calculates client stock growth and subindustry growth
 
 import dal.finance as fin
+from datetime import date, datetime, timedelta
 
 # we can change the start/ end date to be start_date to launch then launch to end_date
 def calculate_avg_growth_over_time(companies, start_date, end_date): 
@@ -59,6 +60,42 @@ def average(input):
     sum = 0
     for a in input:
         sum += a
-    
+
     avg = sum / len(input)
     return avg
+
+
+# check on bank holidays? trading floor closed? 
+def calc_weekdays(start, end, excluded=(6, 7)):
+    all_days = []
+
+    start_date_object = date.fromisoformat(start)
+    end_date_object = date.fromisoformat(end)
+
+    print(start_date_object.isoweekday())
+
+
+    while start_date_object <= end_date_object:
+        if start_date_object.isoweekday() not in excluded:
+            print(start_date_object.isoweekday())
+            all_days.extend(start_date_object)
+        start_date_object += datetime.timedelta(days=1)
+
+    return all_days
+
+
+
+
+
+
+    #     new_date = start_date_object + timedelta(days=1)
+
+    # start_date_object = date.fromisoformat(start)
+    # end_date_object = date.fromisoformat(end)
+
+    # while start_date_object <= end_date_object:
+    #     if start_date_object.isoweekday() not in excluded:
+    #         all_days.append(start_date_object)
+    #     start_date_object += datetime.timedelta(days=1)
+
+    # return all_days

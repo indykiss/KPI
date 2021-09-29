@@ -49,7 +49,7 @@ app.layout = html.Div([
 		min_date_allowed=date(2010, 1, 1),
 		max_date_allowed=date.today(),
 		initial_visible_month=date.today(),
-		date=date(2018, 4, 1)
+		date=date(2021, 7, 1)
 	),
 
 	# Works well enough. 2 years working ok
@@ -60,8 +60,8 @@ app.layout = html.Div([
 		max_date_allowed=date.today(), # in deployment, would need to make this callback to be dynamic: https://stackoverflow.com/questions/62608204/dash-datepicker-max-date-allowed-as-current-date-not-working-properly
 		initial_visible_month=date(2021, 9, 1),
 		clearable=True, 
-		start_date=date(2017,4,1),
-		end_date=date(2019,4,1)
+		start_date=date(2021,6,1),
+		end_date=date(2021,8,1)
 		#calendar_orientation="vertical",
 	),
 
@@ -249,8 +249,11 @@ def update_output(companies, start_date, end_date, launch_date, submitted, clien
 	all_companies = [*companies]
 	all_companies.append(client)
 
+	start_date_object = date.fromisoformat(start_date)
+	print(start_date_object)
+
 	if start_date is not None:
-		dates_data = pd.date_range(start_date, end_date, periods=8)
+		dates_data = calc.calc_weekdays(start_date, end_date)
 		# DATES_DATA IS NOT WORKING?? OR IS IT??
 
 	# Both lines will have all companies' avg growth over time
@@ -274,21 +277,33 @@ def update_output(companies, start_date, end_date, launch_date, submitted, clien
 # Second trace line not visible for some reason?
 def make_graph(dates, all_growths, client_growth):
 
-	print("all_growths")
-	print(all_growths)
-	print("client_growth")
-	print(client_growth)
-	print("dates")
+	# print("all_growths")
+	# print(all_growths)
+	print("dates:")
 	print(dates)
+	print(len(dates))
+	print(len(client_growth))
+	# x and y being lists of different sizes is fucking
+	# everything up. SO i need to use another way to get
+	# the full range of dates that are equal to 
+	# the number of data points.
+	# probably something to do with how the dates_data is
+	# created then passed down 
+	# would be good to parse out times to save load time
+
 	
 	fig = go.Figure()
+	# Trying just 1 line, see if even accurate
+	# This data isn't accurate for some reason?
+	# Maybe how the data is being in a scatter?
+	# 
 	fig.add_trace(go.Scatter(x=dates, y=client_growth,
 						mode="lines+markers",
 						name='Client growth'))
 
-	fig.add_trace(go.Scatter(x=dates, y=all_growths,
-						mode="lines+markers",
-						name='Custom index growth'))
+	# fig.add_trace(go.Scatter(x=dates, y=all_growths,
+	# 					mode="lines+markers",
+	# 					name='Custom index growth'))
 
 	# fig.show()
 
