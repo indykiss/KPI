@@ -74,11 +74,10 @@ def calc_weekdays(start, end, excluded=(6, 7)):
 
     print(start_date_object.isoweekday())
 
-
     while start_date_object <= end_date_object:
         if start_date_object.isoweekday() not in excluded:
             print(start_date_object.isoweekday())
-            all_days.extend(start_date_object)
+            all_days.append(start_date_object)
         start_date_object += datetime.timedelta(days=1)
 
     return all_days

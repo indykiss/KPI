@@ -253,8 +253,11 @@ def update_output(companies, start_date, end_date, launch_date, submitted, clien
 	print(start_date_object)
 
 	if start_date is not None:
-		dates_data = calc.calc_weekdays(start_date, end_date)
+		# dates_data = calc.calc_weekdays(start_date, end_date)
 		# DATES_DATA IS NOT WORKING?? OR IS IT??
+		dates_data = pd.bdate_range(start_date, end_date)
+
+	print(dates_data)
 
 	# Both lines will have all companies' avg growth over time
 	pre_launch_all_avgs = calc.calculate_avg_growth_over_time(all_companies, start_date, launch_date)
