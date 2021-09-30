@@ -19,6 +19,7 @@ import pandas as pd
 # Import misc - maybe delete some
 import re
 import os
+# import holidays
 from datetime import date, datetime, timedelta
 
 # Import functions from my code 
@@ -276,39 +277,19 @@ def update_output(companies, start_date, end_date, launch_date, submitted, clien
 
 
 
-# FIX SECOND TRACE LINE NOT WORKING
-# Second trace line not visible for some reason?
 def make_graph(dates, all_growths, client_growth):
-
-	# print("all_growths")
-	# print(all_growths)
-	print("dates:")
-	print(dates)
-	print(len(dates))
-	print(len(client_growth))
-	# x and y being lists of different sizes is fucking
-	# everything up. SO i need to use another way to get
-	# the full range of dates that are equal to 
-	# the number of data points.
-	# probably something to do with how the dates_data is
-	# created then passed down 
-	# would be good to parse out times to save load time
-
+	# Dates is including holidays but yf doesn't
+	# So if there are issues, that might be the reason 
 	
 	fig = go.Figure()
-	# Trying just 1 line, see if even accurate
-	# This data isn't accurate for some reason?
-	# Maybe how the data is being in a scatter?
-	# 
+
 	fig.add_trace(go.Scatter(x=dates, y=client_growth,
 						mode="lines+markers",
 						name='Client growth'))
 
-	# fig.add_trace(go.Scatter(x=dates, y=all_growths,
-	# 					mode="lines+markers",
-	# 					name='Custom index growth'))
-
-	# fig.show()
+	fig.add_trace(go.Scatter(x=dates, y=all_growths,
+						mode="lines+markers",
+						name='Custom index growth'))
 
 	newGraph = html.Div(dcc.Graph(
 		id='output-subindustry-picker',
