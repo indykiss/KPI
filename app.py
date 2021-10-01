@@ -14,7 +14,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 
 # Import pandas
-import pandas as pd 
+import pandas as pd
 
 # Import misc - maybe delete some
 import re
@@ -117,7 +117,9 @@ app.layout = html.Div([
 			{'label': 'American Express', 'value': 'AXP'},
 			{'label': 'Mastercard', 'value': 'MA'},
 			{'label': 'Visa', 'value': 'V'},
-			{'label': 'Discover', 'value': 'DFS'}						
+			{'label': 'Discover', 'value': 'DFS'},
+			{'label': 'Cisco', 'value': 'CSCO'},
+			{'label': 'QQQ', 'value': 'QQQ'}										
 		],
 		value=['COST', 'SRGHY', 'SPTN', 'KR', 'WBA'],
 		multi=True
@@ -285,11 +287,13 @@ def make_graph(dates, all_growths, client_growth):
 
 	fig.add_trace(go.Scatter(x=dates, y=client_growth,
 						mode="lines+markers",
-						name='Client growth'))
+						name='Client growth',
+						line_shape='spline'))
 
 	fig.add_trace(go.Scatter(x=dates, y=all_growths,
 						mode="lines+markers",
-						name='Custom index growth'))
+						name='Custom index growth',
+						line_shape='spline'))
 
 	newGraph = html.Div(dcc.Graph(
 		id='output-subindustry-picker',
