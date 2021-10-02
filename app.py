@@ -50,7 +50,7 @@ app.layout = html.Div([
 		min_date_allowed=date(2010, 1, 1),
 		max_date_allowed=date.today(),
 		initial_visible_month=date.today(),
-		date=date(2021, 7, 1)
+		date=date(2020, 6, 1)
 	),
 
 	# Works well enough. 2 years working ok
@@ -61,8 +61,8 @@ app.layout = html.Div([
 		max_date_allowed=date.today(), # in deployment, would need to make this callback to be dynamic: https://stackoverflow.com/questions/62608204/dash-datepicker-max-date-allowed-as-current-date-not-working-properly
 		initial_visible_month=date(2021, 9, 1),
 		clearable=True, 
-		start_date=date(2021,6,1),
-		end_date=date(2021,8,1)
+		start_date=date(2020,3,1),
+		end_date=date(2020,9,1)
 		#calendar_orientation="vertical",
 	),
 
@@ -77,51 +77,70 @@ app.layout = html.Div([
 			# multi = True
 	),	
 
-	html.Div("Select the client"),
+	# Rethink entire strategy? 
+	# Custom index is tough. Maybe ETF would be good
+
+	html.Div("Select a client"),
 	dcc.Dropdown(
 		id='input-client-picker',
 		options=[
-			{'label': 'Apple', 'value': 'AAPL'},
-			{'label': 'Google', 'value': 'GOOGL'},
-			{'label': 'Facebook', 'value': 'FB'},
-			{'label': 'Costco', 'value': 'COST'},
-			{'label': 'Shoprite', 'value': 'SRGHY'},
-			{'label': 'Spartan Nash', 'value': 'SPTN'},
-			{'label': 'Kroger', 'value': 'KR'},
-			{'label': 'Walgreens', 'value': 'WBA'},
+			# not a great first 2
+			{'label': 'Airbus', 'value': 'EADSY'},
+			{'label': 'Roche', 'value': 'RHHBY'},			
+			{'label': 'Fluor', 'value': 'FLR'},			
+			{'label': 'Amazon', 'value': 'AMZN'},			
+			{'label': 'Bank of America', 'value': 'BAC'}, 	
+			{'label': 'CVS', 'value': 'CVS'},
+			{'label': 'BlackRock', 'value': 'BLK'},
+			{'label': 'Raytheon', 'value': 'RTX'},
+			{'label': 'UnitedHealth', 'value': 'UNH'},
+			{'label': 'Booking.com', 'value': 'BKNG'},
+			{'label': 'Netflix', 'value': 'NFLX'},
+			{'label': 'Chevron', 'value': 'CVX'},
+			{'label': 'Johnson & Johnson', 'value': 'JNJ'},
+			{'label': 'Coldwell', 'value': 'RLGY'},
+			{'label': 'Tesla', 'value': 'TSLA'},
+			{'label': 'McDonalds', 'value': 'MCD'},
 			{'label': 'Walmart', 'value': 'WMT'},
-			{'label': 'Wegmans', 'value': 'WEGMANS'},			
-			{'label': 'American Express', 'value': 'AXP'},
-			{'label': 'Mastercard', 'value': 'MA'},
-			{'label': 'Visa', 'value': 'V'},			
-			{'label': 'Discover', 'value': 'DFS'}			
+			{'label': 'Facebook', 'value': 'FB'},
+			{'label': 'Apple', 'value': 'AAPL'},
+			{'label': 'AT&T', 'value': 'T'},
+			{'label': 'Timber', 'value': 'WFG'},
+			{'label': 'UPS', 'value': 'UPS'},		
 		],
-		value='WMT'        
+		value='FLR'        
 	),
 
 	# NEED TO SWAP THIS OUT WITH DYNAMIC SEARCH OF ALL S&P COMPANIES
-	html.Div("Select the subindustry competitors"),
+	html.Div("Select the sector ETF"),
 	dcc.Dropdown(
 		id='input-subindustry-picker',
 		options=[
-			{'label': 'Apple', 'value': 'AAPL'},
-			{'label': 'Google', 'value': 'GOOGL'},
-			{'label': 'Facebook', 'value': 'FB'},
-			{'label': 'Costco', 'value': 'COST'},
-			{'label': 'Shoprite', 'value': 'SRGHY'},
-			{'label': 'Spartan Nash', 'value': 'SPTN'},
-			{'label': 'Kroger', 'value': 'KR'},
-			{'label': 'Walgreens', 'value': 'WBA'},
-			{'label': 'Walmart', 'value': 'WMT'},
-			{'label': 'Wegmans', 'value': 'WEGMANS'},
-			{'label': 'American Express', 'value': 'AXP'},
-			{'label': 'Mastercard', 'value': 'MA'},
-			{'label': 'Visa', 'value': 'V'},
-			{'label': 'Discover', 'value': 'DFS'},
-			{'label': 'Cisco', 'value': 'CSCO'},
-			{'label': 'QQQ', 'value': 'QQQ'}										
+			{'label': 'Aerospace & Defence', 'value': 'ITA'},
+			{'label': 'Biotechnology', 'value': 'IBB'},			
+			{'label': 'Construction & Engineering', 'value': 'PKB'},			
+			{'label': 'Consumer discretionary', 'value': 'VCR'},			
+			{'label': 'Financial Services', 'value': 'XLF'}, 	
+			{'label': 'Healthcare', 'value': 'XLV'},
+			{'label': 'Hedge Funds', 'value': 'QAI'},
+			{'label': 'Industrials', 'value': 'XLI'},
+			{'label': 'Insurance', 'value': 'KIE'},
+			{'label': 'Leisure & recreation', 'value': 'PEJ'},
+			{'label': 'Media & Publishing', 'value': 'PBS'},
+			{'label': 'Oil & Gas', 'value': 'USO'},
+			{'label': 'Pharmaceuticals', 'value': 'PJP'},
+			{'label': 'Real Estate', 'value': 'VNQ'},
+			{'label': 'Renewable energy', 'value': 'ICLN'},
+			{'label': 'Restaurants & bars', 'value': 'EATZ'},
+			{'label': 'Retail', 'value': 'XRT'},
+			{'label': 'Software', 'value': 'SKYY'},
+			{'label': 'Technology', 'value': 'VGT'},
+			{'label': 'Telecommunications', 'value': 'FCOM'},
+			{'label': 'Timber', 'value': 'WOOD'},
+			{'label': 'Transportation', 'value': 'IYT'},
+			{'label': 'QQQ', 'value': 'QQQ'}
 		],
-		value=['COST', 'SRGHY', 'SPTN', 'KR', 'WBA'],
+		value=['PKB'],
 		multi=True
 	), 
 
