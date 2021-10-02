@@ -50,7 +50,7 @@ app.layout = html.Div([
 		min_date_allowed=date(2010, 1, 1),
 		max_date_allowed=date.today(),
 		initial_visible_month=date.today(),
-		date=date(2020, 6, 1)
+		date=date(2019, 1, 1)
 	),
 
 	# Works well enough. 2 years working ok
@@ -61,8 +61,8 @@ app.layout = html.Div([
 		max_date_allowed=date.today(), # in deployment, would need to make this callback to be dynamic: https://stackoverflow.com/questions/62608204/dash-datepicker-max-date-allowed-as-current-date-not-working-properly
 		initial_visible_month=date(2021, 9, 1),
 		clearable=True, 
-		start_date=date(2020,3,1),
-		end_date=date(2020,9,1)
+		start_date=date(2020,1,1),
+		end_date=date(2021,1,1)
 		#calendar_orientation="vertical",
 	),
 
@@ -79,6 +79,9 @@ app.layout = html.Div([
 
 	# Rethink entire strategy? 
 	# Custom index is tough. Maybe ETF would be good
+	# Need to look at S&P's charting 
+	# Maybe instead of doing growth day over day, which is wildly up and down, 
+	# we should do overall growth from start to end? 
 
 	html.Div("Select a client"),
 	dcc.Dropdown(
@@ -105,10 +108,10 @@ app.layout = html.Div([
 			{'label': 'Facebook', 'value': 'FB'},
 			{'label': 'Apple', 'value': 'AAPL'},
 			{'label': 'AT&T', 'value': 'T'},
-			{'label': 'Timber', 'value': 'WFG'},
+			{'label': 'West Fraser Timber', 'value': 'WFG'},
 			{'label': 'UPS', 'value': 'UPS'},		
 		],
-		value='FLR'        
+		value='EADSY'        
 	),
 
 	# NEED TO SWAP THIS OUT WITH DYNAMIC SEARCH OF ALL S&P COMPANIES
@@ -140,8 +143,8 @@ app.layout = html.Div([
 			{'label': 'Transportation', 'value': 'IYT'},
 			{'label': 'QQQ', 'value': 'QQQ'}
 		],
-		value=['PKB'],
-		multi=True
+		value=['ITA'],
+		multi=False
 	), 
 
 	# Add a submit button
@@ -264,54 +267,54 @@ def update_client_picker(ticker):
 	Input('input-client-picker', 'value')])
 
 # Need to do expected input/ output audit for these functions for tests
-def update_output(companies, start_date, end_date, launch_date, submitted, client):
+def update_output(entity, start_date, end_date, launch_date, submitted, client):
 	if submitted < 1:
 		raise PreventUpdate
 
-	all_companies = [*companies]
+	all_companies = [*entity]
 	all_companies.append(client)
 
 	start_date_object = date.fromisoformat(start_date)
 	print(start_date_object)
 
 	if start_date is not None:
-		# dates_data = calc.calc_weekdays(start_date, end_date)
-		# DATES_DATA IS NOT WORKING?? OR IS IT??
 		dates_data = pd.bdate_range(start_date, end_date)
 
 	print(dates_data)
 
-	# Both lines will have all companies' avg growth over time
-	pre_launch_all_avgs = calc.calculate_avg_growth_over_time(all_companies, start_date, launch_date)
+		# Both lines will have all companies' avg growth over time
+	# pre_launch_all_avgs = calc.calculate_avg_growth_over_time(all_companies, start_date, launch_date)
+		# After launch date, the subindustry growth rate is different 
+	# post_launch_subind_avgs = calc.calculate_avg_growth_over_time(companies, launch_date, end_date)
+		# We're adding client growth as a trace line over custom index
+	# client_post_launch_snippet = calc.calculate_avg_growth_over_time([client], launch_date, end_date)
+	# client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
+	# all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
 
-	# After launch date, the subindustry growth rate is different 
-	post_launch_subind_avgs = calc.calculate_avg_growth_over_time(companies, launch_date, end_date)
+	client_growth = calc.calculate_avg_growth_alt(client, start_date, end_date)
+	all_growths = calc.calculate_avg_growth_alt(entity, start_date, end_date)
 
-	# we're adding client growth as a trace line over custom index
-	client_post_launch_snippet = calc.calculate_avg_growth_over_time([client], launch_date, end_date)
-
-	client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
-
-	all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
-
-	return make_graph(dates_data, all_growths, client_growth)
-
+	return make_graph(dates_data, all_growths, client_growth, client, entity)
 
 
-def make_graph(dates, all_growths, client_growth):
+
+def make_graph(dates, all_growths, client_growth, client, entity):
 	# Dates is including holidays but yf doesn't
 	# So if there are issues, that might be the reason 
 	
+	client_name = fin.get_name_from_ticker(client)
+	entity_name = fin.get_name_from_ticker(entity)
+
 	fig = go.Figure()
 
 	fig.add_trace(go.Scatter(x=dates, y=client_growth,
-						mode="lines+markers",
-						name='Client growth',
+						mode="lines",
+						name=client_name,
 						line_shape='spline'))
 
 	fig.add_trace(go.Scatter(x=dates, y=all_growths,
-						mode="lines+markers",
-						name='Custom index growth',
+						mode="lines",
+						name=entity_name,
 						line_shape='spline'))
 
 	newGraph = html.Div(dcc.Graph(

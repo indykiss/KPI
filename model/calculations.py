@@ -36,6 +36,25 @@ def calculate_avg_growth_over_time(companies, start_date, end_date):
 		return avg_math(all_growths)
 
 
+# total growth, not the day over day
+def calculate_avg_growth_alt(entity, start_date, end_date):
+	growths = []
+
+	data = fin.get_data(entity, start_date, end_date)
+	stock_data = data['Open']
+	prev_day = 0
+
+	for day_price in stock_data:
+		if prev_day == 0:
+			prev_day = day_price
+		else:
+			percent_change = ((day_price - prev_day) / day_price) * 100 
+			rounded = round(percent_change, 3)
+			growths.append(rounded)	
+
+	return growths
+
+
 # Would return an arr of stock price growth averages
 def avg_math(all_growths):
 	all_average_growths = []
