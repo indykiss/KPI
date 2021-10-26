@@ -37,6 +37,8 @@ def calculate_avg_growth_over_time(companies, start_date, end_date):
 
 
 # total growth, not the day over day
+# but very broken according to the S&P charting info?
+# https://docs.google.com/spreadsheets/d/19b3lTcmgVSpAHsV-Tar6kmg3FCv8964a/edit?usp=sharing&ouid=102344271465415076950&rtpof=true&sd=true
 def calculate_avg_growth_alt(entity, start_date, end_date):
 	growths = []
 
@@ -48,7 +50,7 @@ def calculate_avg_growth_alt(entity, start_date, end_date):
 		if prev_day == 0:
 			prev_day = day_price
 		else:
-			percent_change = ((day_price - prev_day) / day_price) * 100 
+			percent_change = ((day_price - prev_day) / prev_day) * 100 
 			rounded = round(percent_change, 3)
 			growths.append(rounded)	
 

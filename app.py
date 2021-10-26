@@ -275,12 +275,10 @@ def update_output(entity, start_date, end_date, launch_date, submitted, client):
 	all_companies.append(client)
 
 	start_date_object = date.fromisoformat(start_date)
-	print(start_date_object)
 
 	if start_date is not None:
 		dates_data = pd.bdate_range(start_date, end_date)
 
-	print(dates_data)
 
 		# Both lines will have all companies' avg growth over time
 	# pre_launch_all_avgs = calc.calculate_avg_growth_over_time(all_companies, start_date, launch_date)
@@ -298,12 +296,15 @@ def update_output(entity, start_date, end_date, launch_date, submitted, client):
 
 
 
-def make_graph(dates, all_growths, client_growth, client, entity):
+def make_graph(dates, entity_growth, client_growth, client, entity):
 	# Dates is including holidays but yf doesn't
 	# So if there are issues, that might be the reason 
 	
 	client_name = fin.get_name_from_ticker(client)
 	entity_name = fin.get_name_from_ticker(entity)
+
+	print(client_growth)
+	print(entity_growth)
 
 	fig = go.Figure()
 
@@ -312,7 +313,7 @@ def make_graph(dates, all_growths, client_growth, client, entity):
 						name=client_name,
 						line_shape='spline'))
 
-	fig.add_trace(go.Scatter(x=dates, y=all_growths,
+	fig.add_trace(go.Scatter(x=dates, y=entity_growth,
 						mode="lines",
 						name=entity_name,
 						line_shape='spline'))
