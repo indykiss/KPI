@@ -1,5 +1,12 @@
 # Working notes, please ignore for now!
 
+
+Dec 3:
+OOF. Have not touched this in a little while; focused on leetcodes for a while. 
+Nov -> 2 weeks vacation/ 2 weeks moving :(
+See below notes. 
+Currently building CI/ CD pipeline. Issue with heroku running my 1 test. 
+
 Sept 14 Notes:
 Working on now/ in PMs
 - Need to figure out yfinance ticker look up
