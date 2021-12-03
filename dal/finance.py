@@ -1,6 +1,7 @@
 
 # Data access layer. Facade for yf
 import yfinance as yf
+import pandas as pd
 
 def get_data(symbol, start_date, end_date):
     ticker = yf.Ticker(symbol)
