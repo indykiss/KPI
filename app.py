@@ -40,8 +40,8 @@ server = app.server
 app.layout = html.Div([
 
 	# Inputs - UI
-	html.H2('KPI Builder'),    
-	html.H4('Please input target ticker, industry dropdown, and launch date.'),
+	html.H1('KPI Builder'),    
+	html.H3('Please input target ticker, industry dropdown, and launch date.'),
 
 	# Feature extension -- client launch date
 	# Adds a dot to the screen and changes graph mathmatically
@@ -55,7 +55,7 @@ app.layout = html.Div([
 	# ),
 
 	# Works well enough. 2 years working ok
-	html.Div("Select the time range. Please select a starting date before launch and an end date after launch. We recommend 1 year BEFORE launch and 1 year AFTER launch. Please note that selecting competitors that were not public during this entire range will result in skewed data."),
+	html.H4("Select the time range. Please note that selecting competitors that were not public during this entire range will result in skewed data."),
 	dcc.DatePickerRange(
 		id='input-date-range-picker',
 		min_date_allowed=date(2000, 1, 1),
@@ -85,7 +85,7 @@ app.layout = html.Div([
 	# Maybe instead of doing growth day over day, which is wildly up and down, 
 	# we should do overall growth from start to end? 
 
-	html.Div("Select a client"),
+	html.H4("Select a client"),
 	dcc.Dropdown(
 		id='input-client-picker',
 		options=[
@@ -116,8 +116,7 @@ app.layout = html.Div([
 		value='EADSY'        
 	),
 
-	# NEED TO SWAP THIS OUT WITH DYNAMIC SEARCH OF ALL S&P COMPANIES
-	html.Div("Select the sector ETF"),
+	html.H4("Select the sector ETF"),
 	dcc.Dropdown(
 		id='input-subindustry-picker',
 		options=[
@@ -152,8 +151,7 @@ app.layout = html.Div([
 	# Add a submit button
 	html.Button('Submit', id='input-submit', n_clicks=0),
 
-	# Next step: Just add a graph or any info that displays 
-	# the client's ticker info
+	# Extension: Add a graph or any info that displays client's ticker info
 
 	# Outputs - UI
 	# html.Div(id='output-date-picker'), # Extension -- project launch date
@@ -178,12 +176,10 @@ app.layout = html.Div([
 # def update_output(date_value):
 # 	string_prefix = 'Date selected: '
 # 	simple_output = ""
-
 # 	if date_value is not None:
 # 		date_object = date.fromisoformat(date_value)
 # 		date_string = date_object.strftime('%B %d, %Y')
 # 		string_prefix = string_prefix + date_string
-
 # 	return simple_output
 	
 
