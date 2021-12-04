@@ -43,14 +43,16 @@ app.layout = html.Div([
 	html.H2('KPI Builder'),    
 	html.H4('Please input target ticker, industry dropdown, and launch date.'),
 
-	html.Div("Select the project launch date"),
-	dcc.DatePickerSingle(
-		id='input-date-picker',
-		min_date_allowed=date(2010, 1, 1),
-		max_date_allowed=date.today(),
-		initial_visible_month=date.today(),
-		date=date(2019, 1, 1)
-	),
+	# Feature extension -- client launch date
+	# Adds a dot to the screen and changes graph mathmatically
+	# html.Div("Select the project launch date"),
+	# dcc.DatePickerSingle(
+	# 	id='input-date-picker',
+	# 	min_date_allowed=date(2010, 1, 1),
+	# 	max_date_allowed=date.today(),
+	# 	initial_visible_month=date.today(),
+	# 	date=date(2019, 1, 1)
+	# ),
 
 	# Works well enough. 2 years working ok
 	html.Div("Select the time range. Please select a starting date before launch and an end date after launch. We recommend 1 year BEFORE launch and 1 year AFTER launch. Please note that selecting competitors that were not public during this entire range will result in skewed data."),
@@ -67,14 +69,15 @@ app.layout = html.Div([
 
 	# NEED TO SWAP OUT WITH DYNAMIC PICK OF ALL S&P COs    
 	# Pausing on this because a little tougher to implement search
-	html.Div("This would be a dynamic search through yfinance for a ticker"),
-	dcc.Input(
-			id='input-yf-client-ticker', 
-			type = 'search'
-			# options = options,
-			# value = ['SPY'], 
-			# multi = True
-	),	
+	# Extension -- ticker lookup with API
+	# html.Div("This would be a dynamic search through yfinance for a ticker"),
+	# dcc.Input(
+	# 		id='input-yf-client-ticker', 
+	# 		type = 'search'
+	# 		# options = options,
+	# 		# value = ['SPY'], 
+	# 		# multi = True
+	# ),	
 
 	# Rethink entire strategy? 
 	# Custom index is tough. Maybe ETF would be good
@@ -153,12 +156,12 @@ app.layout = html.Div([
 	# the client's ticker info
 
 	# Outputs - UI
-	html.Div(id='output-date-picker'),
+	# html.Div(id='output-date-picker'), # Extension -- project launch date
 	html.Div(id='output-client-picker'),
 	html.Div(id='output-date-range-picker'),
 	html.Div(id='output-subindustry-picker'),
-	html.Div(id='output-submit'), 
-	html.Div(id='output-yf-client-ticker')	
+	html.Div(id='output-submit')
+	# html.Div(id='output-yf-client-ticker') # Extension -- ticker lookup	
 ])
 
 
@@ -167,20 +170,21 @@ app.layout = html.Div([
 # Each input/ output uses it's own callback   
 
 # Select date of launch
-@app.callback(
-	Output('output-date-picker', 'children'),
-	Input('input-date-picker', 'date'))
+# Extension -- project launch date 
+# @app.callback(
+# 	Output('output-date-picker', 'children'),
+# 	Input('input-date-picker', 'date'))
 
-def update_output(date_value):
-	string_prefix = 'Date selected: '
-	simple_output = ""
+# def update_output(date_value):
+# 	string_prefix = 'Date selected: '
+# 	simple_output = ""
 
-	if date_value is not None:
-		date_object = date.fromisoformat(date_value)
-		date_string = date_object.strftime('%B %d, %Y')
-		string_prefix = string_prefix + date_string
+# 	if date_value is not None:
+# 		date_object = date.fromisoformat(date_value)
+# 		date_string = date_object.strftime('%B %d, %Y')
+# 		string_prefix = string_prefix + date_string
 
-	return simple_output
+# 	return simple_output
 	
 
 
@@ -208,15 +212,15 @@ def update_output(start_date, end_date):
 		return simple_output
 
 
+# Extension - ticker lookup
 # Select client BUT using yfinance to look up tickers, not hardcoded 
 # TBD, not in use yet
-@app.callback(
-	Output('output-yf-client-ticker', 'children'),
-	Input('input-yf-client-ticker', 'value'))
+# @app.callback(
+# 	Output('output-yf-client-ticker', 'children'),
+# 	Input('input-yf-client-ticker', 'value'))
 
-# TBD
-def update_yf_client_ticker(ticker):
-	return ""
+# def update_yf_client_ticker(ticker):
+# 	return ""
 	# string_answer = 'You have selected: '
 
 	# # if input is accurate ticker
@@ -249,7 +253,6 @@ def update_client_picker(ticker):
 
 
 # Select the custom index competitors
-
 # 1. Grab each one's stock price data from start to end date
 # 2. Calculates stock price growth for each company over time
 # 3. Calculates average growth for the custom index
@@ -261,12 +264,14 @@ def update_client_picker(ticker):
 	[Input('input-subindustry-picker', 'value'), 
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date'),
-	Input('input-date-picker', 'date'),
+	# Input('input-date-picker', 'date'), # Extension - project launch date
+	# IF I add back, need to add launch_date in parameter like:
+	# def update_output(entity, start_date, end_date, launch_date, submitted, client):
 	Input('input-submit', 'n_clicks'), 
 	Input('input-client-picker', 'value')])
 
 # Need to do expected input/ output audit for these functions for tests
-def update_output(entity, start_date, end_date, launch_date, submitted, client):
+def update_output(entity, start_date, end_date, submitted, client):
 	if submitted < 1:
 		raise PreventUpdate
 
@@ -278,7 +283,13 @@ def update_output(entity, start_date, end_date, launch_date, submitted, client):
 	if start_date is not None:
 		dates_data = pd.bdate_range(start_date, end_date)
 
+	client_growth = calc.calculate_avg_growth_alt(client, start_date, end_date)
+	all_growths = calc.calculate_avg_growth_alt(entity, start_date, end_date)
 
+	return make_graph(dates_data, all_growths, client_growth, client, entity)
+
+	# Extension -- IF using launch_date for project launch. 
+	# Not working perfectly, but essentially: 
 		# Both lines will have all companies' avg growth over time
 	# pre_launch_all_avgs = calc.calculate_avg_growth_over_time(all_companies, start_date, launch_date)
 		# After launch date, the subindustry growth rate is different 
@@ -288,11 +299,6 @@ def update_output(entity, start_date, end_date, launch_date, submitted, client):
 	# client_growth = [*pre_launch_all_avgs, *client_post_launch_snippet]
 	# all_growths = [*pre_launch_all_avgs, *post_launch_subind_avgs]
 
-	client_growth = calc.calculate_avg_growth_alt(client, start_date, end_date)
-	all_growths = calc.calculate_avg_growth_alt(entity, start_date, end_date)
-
-	return make_graph(dates_data, all_growths, client_growth, client, entity)
-
 
 
 def make_graph(dates, entity_growth, client_growth, client, entity):
@@ -301,9 +307,6 @@ def make_graph(dates, entity_growth, client_growth, client, entity):
 	
 	client_name = fin.get_name_from_ticker(client)
 	entity_name = fin.get_name_from_ticker(entity)
-
-	print(client_growth)
-	print(entity_growth)
 
 	fig = go.Figure()
 
@@ -333,11 +336,13 @@ def make_graph(dates, entity_growth, client_growth, client, entity):
 	Input('input-subindustry-picker', 'value'), 
 	Input('input-date-range-picker', 'start_date'), 
 	Input('input-date-range-picker', 'end_date'),
-	Input('input-date-picker', 'date'),
+	# Input('input-date-picker', 'date'), # Extension for client launch
+	# IF I add back, need to add launch_date in parameter like:
+	# def update_output(n_clicks, companies, start_date, end_date, launch_date, client):
 	Input('input-client-picker', 'value')])
 
-def update_output(n_clicks, companies, start_date, end_date, launch_date, client):
-	if companies is None or start_date is None or end_date is None or launch_date is None or client is None:
+def update_output(n_clicks, companies, start_date, end_date, client):
+	if companies is None or start_date is None or end_date is None or client is None:
 		raise PreventUpdate
 	else:
 		return 'Please be patient. Graph loading times vary.'
