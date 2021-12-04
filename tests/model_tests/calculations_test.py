@@ -9,8 +9,7 @@ def test_average():
     expected = 7
 
     #act
-    # actual = calc.average(list)
-    actual = 7
+    actual = calc.average(list)
 
     #assert
     return actual == expected

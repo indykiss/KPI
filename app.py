@@ -28,7 +28,6 @@ import dal.finance as fin
 from helpers import make_table, make_card, ticker_inputs, make_item  #maybe delete
 
 
-
 # Out of box specifications by Dash 
 # Update to have McK branding at some point 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
