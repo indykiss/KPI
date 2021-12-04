@@ -4,7 +4,7 @@
   "environments": {
     "test": {
       "scripts": {
-        "test": "bundle exec rake spec"
+        "test": "python -m pytest"
       }
     }
   }
