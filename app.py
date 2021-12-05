@@ -1,15 +1,13 @@
 
 # Import dash
-import dash
 
 # Fix this issue? IDK. ImportError in Heroku logs
 # Auto-deploy not working
-# import dash_core_components as dcc
-# import dash_html_components as html
-from dash import dcc
-from dash import html
 
+# JUST FIX THE RED SQUIGGLYS BEFORE PUSHING TO MASTER
+from dash import Dash, dash, html, dcc
 # import dash_bootstrap_components as dbc
+
 from dash.dependencies import Input, Output # So I can simplify callback
 from dash.exceptions import PreventUpdate
 
@@ -246,10 +244,10 @@ def update_client_picker(ticker):
 	TICKER = fin.get_ticker(ticker)
 	simple_output = ""
 		
-	cards = [ 
-	dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName'])),
-	dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
-	]
+	# cards = [ 
+	# dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName'])),
+	# dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
+	# ]
 
 	return simple_output
 
@@ -351,10 +349,13 @@ def update_output(n_clicks, companies, start_date, end_date, client):
 
 
 
-
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run_server(host="0.0.0.0", port=port)	
+     app.run_server(debug = True, port = 8080)
+
+
+# if __name__ == '__main__':
+#     port = int(os.environ.get("PORT", 5000))
+#     app.run_server(host="0.0.0.0", port=port)	
 	# app.run_server(debug=True)
 
 
