@@ -4,6 +4,8 @@ import dash
 
 # Fix this issue? IDK. ImportError in Heroku logs
 # Auto-deploy not working
+# import dash_core_components as dcc
+# import dash_html_components as html
 from dash import dcc
 from dash import html
 
@@ -351,4 +353,10 @@ def update_output(n_clicks, companies, start_date, end_date, client):
 
 
 if __name__ == '__main__':
-	app.run_server(debug=True)
+    app.run_server(host='0.0.0.0', port=8080 ,debug=True)
+	# app.run_server(debug=True)
+
+
+# if __name__ == "__main__":
+#     port = int(os.environ.get("PORT", 5000))
+#     app.run(host="0.0.0.0", port=port)
