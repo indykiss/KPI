@@ -36,9 +36,7 @@ from helpers import make_table, make_card, ticker_inputs, make_item  #maybe dele
 # Update to have McK branding at some point 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app = Dash()
-
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 # Layout of components 
@@ -349,9 +347,11 @@ def update_output(n_clicks, companies, start_date, end_date, client):
 		return 'Please be patient. Graph loading times vary.'
 
 
-
 if __name__ == '__main__':
-	app.run(debug=True, port=int(os.environ.get("PORT", 5000)), host='0.0.0.0')
+    app.run_server(debug=True)
+
+# if __name__ == '__main__':
+# 	app.run(debug=True, port=int(os.environ.get("PORT", 5000)), host='0.0.0.0')
 
 
 # if __name__ == '__main__':
