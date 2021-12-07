@@ -5,9 +5,9 @@ import dash
 # Fix this issue? IDK. ImportError in Heroku logs
 # Auto-deploy not working
 # JUST FIX THE RED SQUIGGLYS BEFORE PUSHING TO MASTER
-from dash import Dash, html, dcc 
+from dash import Dash, html, dcc
 # from dash import Dash, html, dcc
-# import dash_bootstrap_components as dbc
+import dash_bootstrap_components as dbc
 
 
 from dash.dependencies import Input, Output # So I can simplify callback
