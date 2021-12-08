@@ -245,11 +245,6 @@ def update_client_picker(ticker):
 	ticker = ticker.upper()
 	# TICKER = fin.get_ticker(ticker)
 	simple_output = ""
-		
-	# cards = [ 
-	# dbc.Col(make_card("Client selected:", "secondary", TICKER.info['shortName'])),
-	# dbc.Col(make_card("Open", "secondary", TICKER.info['open']))
-	# ]
 
 	return simple_output
 
@@ -350,7 +345,7 @@ def update_output(n_clicks, companies, start_date, end_date, client):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 
 # if __name__ == '__main__':
 # 	app.run(debug=True, port=int(os.environ.get("PORT", 5000)), host='0.0.0.0')

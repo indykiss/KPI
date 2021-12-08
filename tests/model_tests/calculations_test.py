@@ -3,38 +3,26 @@
 import pytest
 import model.calculations as calc
 
-
-# I actually need to double check my maths
-def test_avg_math():
+def test_calculate_avg_growth_alt():
     #arrange
-    all_growths = [[10,10,10,10], [10,10,10,10], [20,20,20,20], [20,20,20,20]]
-    all_avg_growths = []
-    num_days = 4
-    i = 0
+    growths = [] # should be [100, 101.51, 100.52, 100.52]
+    stock_data = [44.33, 45.00, 44.56, 44.56]
+    first_day = 0
 
-    while i < num_days:
-    	sum = 0
-        # arr = [10,10,10, 10]
-    	for arr in all_growths:
-    		sum += arr[i]
-    	i += 1
-
-        # sum = 40. 
-        # maybe this needs to be len(arr)
-    	avg = sum / len(all_growths)
-        # avg = 10 
-    	rounded = round(avg, 3)
-        # rounded = 10 
-    	all_avg_growths.append(rounded)  
-        # [10]  
-
-    expected = [10, 10, 20, 20]
+    for day_price in stock_data:
+        if first_day == 0:
+            first_day = day_price
+            growths.append(100)
+        else: 
+            percent_change = ((day_price / first_day)) * 100 
+            rounded = round(percent_change, 2)
+            growths.append(rounded)	
 
     #actual 
-    actual_res = calc.avg_math(all_avg_growths)    
+    actual = calc.calculate_avg_growth_alt("BAC", '2021-12-02', '2021-12-07')
 
     #assert
-    return expected == actual_res
+    return growths == actual 
 
 
 def test_average():

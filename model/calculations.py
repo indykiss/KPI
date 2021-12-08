@@ -6,9 +6,10 @@ import dal.finance as fin
 from datetime import date, datetime, timedelta
 
 # we can change the start/ end date to be start_date to launch then launch to end_date
-def calculate_avg_growth_over_time(companies, start_date, end_date): 
+def calculate_avg_growth_over_time_custom_index(companies, start_date, end_date): 
 	all_growths = []
 
+	# If we're building a custom index
 	for x in companies: 
 		if start_date is not None:
 			try:
@@ -37,26 +38,29 @@ def calculate_avg_growth_over_time(companies, start_date, end_date):
 
 
 # total growth, not the day over day
-# but very broken according to the S&P charting info?
+# run a report in cap to check?
 # https://docs.google.com/spreadsheets/d/19b3lTcmgVSpAHsV-Tar6kmg3FCv8964a/edit?usp=sharing&ouid=102344271465415076950&rtpof=true&sd=true
 def calculate_avg_growth_alt(entity, start_date, end_date):
 	growths = []
-
-	data = fin.get_data(entity, start_date, end_date)
-	stock_data = data['Open']
-	prev_day = 0
-
+	data = fin.get_data(entity, start_date, end_date) 
+	stock_data = data['Open'] 
+	first_day = 0
+	print(entity)
+	
 	for day_price in stock_data:
-		if prev_day == 0:
-			prev_day = day_price
+		if first_day == 0:
+			first_day = day_price
+			growths.append(100) # need to start growth with 100%
 		else:
-			percent_change = ((day_price - prev_day) / prev_day) * 100 
-			rounded = round(percent_change, 3)
+			percent_change = ((day_price / first_day)) * 100 
+			rounded = round(percent_change, 2)
 			growths.append(rounded)	
 
 	return growths
 
 
+
+# Extension - custom index
 # Would return an arr of stock price growth averages
 def avg_math(all_growths):
 	all_average_growths = []
@@ -76,7 +80,6 @@ def avg_math(all_growths):
 
 	return all_average_growths
 
-
 def average(input):
     sum = 0
     for a in input:
@@ -93,8 +96,6 @@ def calc_weekdays(start, end, excluded=(6, 7)):
 
     start_date_object = date.fromisoformat(start)
     end_date_object = date.fromisoformat(end)
-
-    print(start_date_object.isoweekday())
 
     while start_date_object <= end_date_object:
         if start_date_object.isoweekday() not in excluded:
