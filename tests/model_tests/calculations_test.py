@@ -3,6 +3,40 @@
 import pytest
 import model.calculations as calc
 
+
+# I actually need to double check my maths
+def test_avg_math():
+    #arrange
+    all_growths = [[10,10,10,10], [10,10,10,10], [20,20,20,20], [20,20,20,20]]
+    all_avg_growths = []
+    num_days = 4
+    i = 0
+
+    while i < num_days:
+    	sum = 0
+        # arr = [10,10,10, 10]
+    	for arr in all_growths:
+    		sum += arr[i]
+    	i += 1
+
+        # sum = 40. 
+        # maybe this needs to be len(arr)
+    	avg = sum / len(all_growths)
+        # avg = 10 
+    	rounded = round(avg, 3)
+        # rounded = 10 
+    	all_avg_growths.append(rounded)  
+        # [10]  
+
+    expected = [10, 10, 20, 20]
+
+    #actual 
+    actual_res = calc.avg_math(all_avg_growths)    
+
+    #assert
+    return expected == actual_res
+
+
 def test_average():
     #arrange
     list = [1 , 8 , 12]
@@ -13,9 +47,6 @@ def test_average():
 
     #assert
     return actual == expected
-
-def another_test():
-    return True
 
 
 # Make more calculation tests here 

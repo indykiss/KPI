@@ -87,6 +87,7 @@ def average(input):
 
 
 # check on bank holidays? trading floor closed? 
+# no need to test yet, I'm not using this:
 def calc_weekdays(start, end, excluded=(6, 7)):
     all_days = []
 
