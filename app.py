@@ -9,7 +9,6 @@ from dash import Dash, html, dcc
 # from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 
-
 from dash.dependencies import Input, Output # So I can simplify callback
 from dash.exceptions import PreventUpdate
 
@@ -32,6 +31,7 @@ from datetime import date, datetime, timedelta
 import model.calculations as calc
 import dal.finance as fin
 from helpers import make_table, make_card, ticker_inputs, make_item  #maybe delete
+
 
 
 # Out of box specifications by Dash 
@@ -243,7 +243,7 @@ def update_output(start_date, end_date):
 # Connect the yfinance API here 
 def update_client_picker(ticker):
 	ticker = ticker.upper()
-	TICKER = fin.get_ticker(ticker)
+	# TICKER = fin.get_ticker(ticker)
 	simple_output = ""
 		
 	# cards = [ 
@@ -279,8 +279,7 @@ def update_output(entity, start_date, end_date, submitted, client):
 
 	all_companies = [*entity]
 	all_companies.append(client)
-
-	start_date_object = date.fromisoformat(start_date)
+	# start_date_object = date.fromisoformat(start_date)
 
 	if start_date is not None:
 		dates_data = pd.bdate_range(start_date, end_date)
