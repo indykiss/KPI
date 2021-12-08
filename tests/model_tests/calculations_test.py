@@ -14,6 +14,9 @@ def test_average():
     #assert
     return actual == expected
 
+def another_test():
+    return True
+
 
 # Make more calculation tests here 
 # idk, nothing is working right now :(
