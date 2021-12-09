@@ -17,9 +17,7 @@ import sqlite3
 
 
 # All my helper functions
-
-
-
+# Didn't end up implementing, so archive in notes
 
 
 

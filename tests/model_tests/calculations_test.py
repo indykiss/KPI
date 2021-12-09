@@ -3,7 +3,7 @@
 import pytest
 import model.calculations as calc
 
-def test_calculate_avg_growth_alt():
+def test_calculate_avg_growth():
     #arrange
     growths = [] # should be [100, 101.51, 100.52, 100.52]
     stock_data = [44.33, 45.00, 44.56, 44.56]
@@ -19,7 +19,7 @@ def test_calculate_avg_growth_alt():
             growths.append(rounded)	
 
     #actual 
-    actual = calc.calculate_avg_growth_alt("BAC", '2021-12-02', '2021-12-07')
+    actual = calc.calculate_avg_growth("BAC", '2021-12-02', '2021-12-07')
 
     #assert
     return growths == actual 
